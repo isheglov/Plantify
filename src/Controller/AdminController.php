@@ -11,14 +11,32 @@ final class AdminController
     public function index(): Response
     {
         return new Response(
-            '<html><body>Добавить растения</body></html>'
+            '<html><body>
+                        <div><a href="/admin/plants/add">Добавить растения</a></div>
+                        <div><a href="/admin/plants/list">Список растений</a></div>
+                        <div><a href="/admin">adminPanel</a></div>
+                    </body></html>'
+
         );
     }
 
     public function addPlants(): Response
     {
         return new Response(
-            '<html><body>Добавить растениe</body></html>'
+            '<html><body>
+                        Добавить растениe
+                        <div><a href="/admin">adminPanel</a></div>
+                    </body></html>'
+        );
+    }
+
+    public function getListPlants(): Response
+    {
+        return new Response(
+            '<html><body>
+                        Список растений
+                        <div><a href="/admin">adminPanel</a></div>
+                    </body></html>'
         );
     }
 }

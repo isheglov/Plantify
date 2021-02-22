@@ -1,0 +1,14 @@
+# admin
+admin_index:
+    path: /admin
+    controller: App\Controller\AdminController::index
+
+admin_add_plants:
+    path: /admin/plants/add
+    controller: App\Controller\AdminController::addPlants
+
+admin_list_plants:
+    path: /admin/plants/list
+    controller: App\Controller\AdminController::getListPlants
+
+
