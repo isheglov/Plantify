@@ -1,14 +1,14 @@
 # admin
 admin_index:
-    path: /admin
+    path: /admin_old
     controller: App\Controller\AdminController::index
 
 admin_add_plants:
-    path: /admin/plants/add
+    path: /admin_old/plants/add
     controller: App\Controller\AdminController::addPlants
 
 admin_list_plants:
-    path: /admin/plants/list
+    path: /admin_old/plants/list
     controller: App\Controller\AdminController::getListPlants
 
 
