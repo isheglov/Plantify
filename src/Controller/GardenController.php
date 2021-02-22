@@ -6,16 +6,15 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 
-final class UserController
+final class GardenController
 {
     public function index(): Response
     {
         return new Response(
             '<html>
                         <body>
-                            <div><a href="/garden/create">Создание участка</a></div>
-                            <div>Рекомендации по посадке</div>
-                            <div>Посадка растения</div>
+                            <div>Создание участка</div>
+                            <div><a href="/">main</a></div>
                         </body>
                     </html>'
         );
