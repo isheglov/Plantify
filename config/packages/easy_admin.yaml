@@ -1,4 +1,13 @@
 easy_admin:
+    site_name: Планировщик посадки растений Plantify
+
+    design:
+        menu:
+            - { route: 'user_index', label: 'Back to the website', icon: 'home' }
+            - { entity: 'Plant', label: 'Растения', icon: 'tree' }
+            - { entity: 'Planting', label: 'Посадка', icon: 'comments' }
+            - { entity: 'Region', label: 'Регион', icon: 'map-marker' }
+
     entities:
         # List the entity class name you want to manage
         - App\Entity\Plant
