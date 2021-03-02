@@ -1,0 +1,7 @@
+garden_index:
+    path: /garden
+    controller: App\Controller\GardenController::index
+
+garden_create:
+    path: /garden/create
+    controller: App\Controller\GardenController::create

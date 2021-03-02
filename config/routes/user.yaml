@@ -1,10 +1,4 @@
-
 # user
 user_index:
     path: /
     controller: App\Controller\UserController::index
-
-user_garden_create:
-    path: /garden/create
-    controller: App\Controller\GardenController::index
-
