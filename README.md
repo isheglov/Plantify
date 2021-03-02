@@ -4,5 +4,5 @@ Deploy:
 `git push heroku master`
 
 Migrations
-`heroku ps:exec`
+`heroku run bash`
 `symfony console doctrine:migrations:migrate`
