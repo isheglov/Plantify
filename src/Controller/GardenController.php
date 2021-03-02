@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Garden;
 use App\Entity\GardenCell;
 use App\Repository\GardenRepository;
+use App\Repository\PlantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -19,10 +20,16 @@ final class GardenController extends AbstractController
     private $gardenRepository;
     /** @var EntityManagerInterface */
     private $entityManager;
+    /** @var PlantRepository */
+    private $plantRepository;
 
-    public function __construct(GardenRepository $gardenRepository, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        GardenRepository $gardenRepository,
+        PlantRepository $plantRepository,
+        EntityManagerInterface $entityManager
+    ) {
         $this->gardenRepository = $gardenRepository;
+        $this->plantRepository = $plantRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -42,19 +49,14 @@ final class GardenController extends AbstractController
                 'plantId' => $gardenCell->getPlant()?$gardenCell->getPlant()->getId():'',
                 'plantName' => $gardenCell->getPlant()?$gardenCell->getPlant()->getName():'пусто',
             ];
-//
-//            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()]
-//                = $gardenCell->getPlant() ? $gardenCell->getPlant()->getName() : '';
-
         }
 
-
-//var_dump($gardenCellList);die();
 
         return $this->render('garden/index.html.twig', [
             'dimensionX' => $garden->getDimensionX(),
             'dimensionY' => $garden->getDimensionY(),
             'gardenCellList' => $gardenCellList,
+            'plantList' => $this->plantRepository->findAll(),
         ]);
     }
 

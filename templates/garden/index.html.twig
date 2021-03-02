@@ -23,6 +23,7 @@
         }
         label, input { display:block; }
         input.text { margin-bottom:12px; width:95%; padding: .4em; }
+        select { margin-bottom:12px; width:95%; padding: .4em; }
         fieldset { padding:0; border:0; margin-top:25px; }
         h1 { font-size: 1.2em; margin: .6em 0; }
         div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
@@ -40,7 +41,12 @@
     <form>
         <fieldset>
             <label for="plant">Название</label>
-            <input type="text" name="plant" id="plant" value="Петрушка" class="text ui-widget-content ui-corner-all">
+{#            <input type="text" name="plant" id="plant" value="Петрушка" class="text ui-widget-content ui-corner-all">#}
+            <select name="plant" id="plant" class="select text ui-widget-content ui-corner-all">
+                {% for plant in plantList %}
+                <option>{{ plant.name }}</option>
+                {% endfor %}
+            </select>
 
             <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
         </fieldset>
@@ -71,22 +77,18 @@
         var clickedId;
         var dialog, form,
 
-            plant = jQuery( "#plant" ),
-            allFields = jQuery( [] ).add( plant );
+            plant = jQuery( "#plant" );
 
 
         function addUser() {
-            var valid = true;
-            allFields.removeClass( "ui-state-error" );
 
 
-            if ( valid ) {
-                jQuery( "#"+clickedId )[0].innerText = plant.val();
+            jQuery( "#"+clickedId )[0].innerText = plant.val();
 
-                // ajax backend request
+            // ajax backend request set plant
 
-                dialog.dialog( "close" );
-            }
+            dialog.dialog( "close" );
+
 
             return valid;
         }
@@ -104,7 +106,6 @@
             },
             close: function() {
                 form[ 0 ].reset();
-                allFields.removeClass( "ui-state-error" );
             }
         });
 
@@ -120,5 +121,4 @@
     } );
 </script>
 </body>
-
 </html>
