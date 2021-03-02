@@ -5,3 +5,7 @@ garden_index:
 garden_create:
     path: /garden/create
     controller: App\Controller\GardenController::create
+
+garden_delete:
+    path: /garden/delete
+    controller: App\Controller\GardenController::delete

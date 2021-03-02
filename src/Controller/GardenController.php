@@ -4,49 +4,119 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Garden;
+use App\Entity\GardenCell;
+use App\Repository\GardenRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 final class GardenController extends AbstractController
 {
+    /** @var GardenRepository */
+    private $gardenRepository;
+    /** @var EntityManagerInterface */
+    private $entityManager;
+
+    public function __construct(GardenRepository $gardenRepository, EntityManagerInterface $entityManager)
+    {
+        $this->gardenRepository = $gardenRepository;
+        $this->entityManager = $entityManager;
+    }
+
     public function index(Request $request): Response
     {
+        $gardenList = $this->gardenRepository->findAll();
+
+        if(empty($gardenList)) {
+            return $this->redirectToRoute('user_index');
+        }
+
+        $garden = end($gardenList);
+
+        $gardenCellList = [];
+        foreach ($garden->getCellList() as $gardenCell) {
+            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
+                'plantId' => $gardenCell->getPlant()?$gardenCell->getPlant()->getId():'',
+                'plantName' => $gardenCell->getPlant()?$gardenCell->getPlant()->getName():'пусто',
+            ];
+//
+//            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()]
+//                = $gardenCell->getPlant() ? $gardenCell->getPlant()->getName() : '';
+
+        }
+
+
+//var_dump($gardenCellList);die();
+
         return $this->render('garden/index.html.twig', [
-            'dimensionX' => 2,
-            'dimensionY' => 5,
+            'dimensionX' => $garden->getDimensionX(),
+            'dimensionY' => $garden->getDimensionY(),
+            'gardenCellList' => $gardenCellList,
         ]);
     }
 
     public function create(Request $request): Response
     {
         $form = $this->createFormBuilder()
-            ->add('rows', NumberType::class)
-            ->add('cells', NumberType::class)
+            ->add('rows', IntegerType::class, ['label' => 'Строк'])
+            ->add('cells', IntegerType::class, ['label' => 'Столбцов'])
             ->getForm();
-
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-//            print_r($data);
+            $garden = new Garden();
+            $garden
+                ->setDimensionX($data['cells'])
+                ->setDimensionY($data['rows'])
+            ;
 
-            return $this->redirectToRoute('user_index');
+            $this->entityManager->persist($garden);
+            $this->entityManager->flush();
+
+            for ($i=0;$i<$data['cells'];$i++) {
+                for ($j=0;$j<$data['rows'];$j++) {
+                    $gardenCell = (new GardenCell())
+                        ->setPositionX($i)
+                        ->setPositionY($j)
+                        ->setGarden($garden)
+                    ;
+
+                    $this->entityManager->persist($gardenCell);
+                    $this->entityManager->flush();
+
+                    $garden->addCellList($gardenCell);
+                }
+            }
+
+            $this->entityManager->persist($garden);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('garden_index');
         }
-
 
         return $this->render('garden/create.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    public function delete(Request $request): Response
+    {
+        foreach ($this->gardenRepository->findAll() as $garden) {
+            foreach ($garden->getCellList() as $gardenCell) {
+                $this->entityManager->remove($gardenCell);
+            }
+
+            $this->entityManager->remove($garden);
+        }
+
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('user_index');
     }
 }
