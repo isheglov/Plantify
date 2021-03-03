@@ -1,0 +1,3 @@
+suggestion_combined:
+    path: /suggestion/combined
+    controller: App\Controller\SuggestionController::combined

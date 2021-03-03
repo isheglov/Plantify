@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <title>Plantify</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -9,28 +9,24 @@
             left: 100px;
             top: 150px;
         }
-        /*button {*/
-        /*    position: absolute;*/
-        /*    left: 100px;*/
-        /*    top: 120px;*/
-        /*}*/
+        h2#t {
+            position: absolute;
+            left: 100px;
+            top: 100px;
+        }
         table, th, td {
-            /*border: 1px solid black;*/
+            border: 1px solid black;
             border-collapse: collapse;
         }
         th, td {
-            padding: 15px;
+            padding: 30px;
         }
         label, input { display:block; }
-        input.text { margin-bottom:12px; width:95%; padding: .4em; }
         select { margin-bottom:12px; width:95%; padding: .4em; }
         fieldset { padding:0; border:0; margin-top:25px; }
         h1 { font-size: 1.2em; margin: .6em 0; }
-        div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
-        div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
-        .ui-dialog .ui-state-error { padding: .3em; }
+        .ui-dialog { padding: .3em; }
     </style>
-{#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>#}
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -40,11 +36,10 @@
 <div id="dialog-form" title="Что здесь растет">
     <form>
         <fieldset>
-            <label for="plant">Название</label>
-{#            <input type="text" name="plant" id="plant" value="Петрушка" class="text ui-widget-content ui-corner-all">#}
+            <label for="plant">Название основной культуры</label>
             <select name="plant" id="plant" class="select text ui-widget-content ui-corner-all">
                 {% for plant in plantList %}
-                <option value="{{ plant.id }}">{{ plant.name }}</option>
+                    <option value="{{ plant.id }}">{{ plant.name }}</option>
                 {% endfor %}
             </select>
 
@@ -53,19 +48,31 @@
     </form>
 </div>
 
-<table style="width:400px">
-    <th>Схема участка</th>
+<div id="combined-form" title="Комбинированные посадки">
+    <form>
+        <fieldset>
+            <div id="combined-suggestion"></div>
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </fieldset>
+    </form>
+</div>
+
+<div>
+<h2 id="t">Схема участка</h2>
+<table style="width:900px">
     {% for i in 0..dimensionY-1 %}
         <tr>
             {% for j in 0..dimensionX-1 %}
                 <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
                     {{ gardenCellList[j][i]['plantName'] }}
 {#                    {{ gardenCellList[j][i]['plantId'] }}#}
+{#                    <img id="question" data-plantId="{{ gardenCellList[j][i]['plantId'] }}" src="./img/q.svg" alt="?" height="25px" width="25px"/>#}
                 </td>
             {% endfor %}
         </tr>
     {% endfor %}
 </table>
+</div>
 
 
 <div>
@@ -81,7 +88,7 @@
 <script>
     jQuery( function() {
         var clickedId;
-        var dialog, form;
+        var dialog, form, combined;
 
         function setPlant() {
             jQuery( "#"+clickedId )[0].innerText = $( "#plant option:selected" ).text();
@@ -100,6 +107,17 @@
             dialog.dialog( "close" );
         }
 
+        function parseCompanionsJson(json) {
+            json.forEach(addCombinedSuggestion);
+
+            function addCombinedSuggestion (item) {
+                const companionList = item.companionList.join(', ');
+
+                let text = "<div>Для <strong>"+item.plant+"</strong> подходит "+companionList+".</div>";
+                $("#combined-suggestion").append(text);
+            }
+        }
+
         dialog = jQuery( "#dialog-form" ).dialog({
             autoOpen: false,
             height: 400,
@@ -116,14 +134,47 @@
             }
         });
 
+        combined = jQuery( "#combined-form" ).dialog({
+            autoOpen: false,
+            height: 400,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Закрыть": function() {
+                    combined.dialog( "close" );
+                }
+            },
+            close: function() {
+                form[ 0 ].reset();
+            }
+        });
+
         form = dialog.find( "form" ).on( "submit", function( event ) {
             event.preventDefault();
             setPlant();
         });
 
-        jQuery( "[id^=cell]" ).button().on( "click", function() {
+        jQuery( "[id^=cell]" ).on( "click", function() {
             dialog.dialog( "open" );
             clickedId = this.id;
+        });
+
+        jQuery( "[id=combined]" ).on( "click", function() {
+
+            $.ajax({
+                url: '/suggestion/combined/',
+                type: 'GET',
+                success: function(result) {
+                    console.log(result);
+                    parseCompanionsJson(result);
+                }
+            });
+
+            combined.dialog( "open" );
+        });
+
+        jQuery( "[id=question]" ).on( "click", function() {
+            console.log('question');
         });
     } );
 </script>

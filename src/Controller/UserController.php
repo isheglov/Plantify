@@ -16,7 +16,8 @@ final class UserController
             '<html>
                         <body>
                             <div><a href="/garden/create">Создание участка</a></div>
-                            <div>Рекомендации по посадке</div>
+                            <div><a href="/garden">К участку</a></div>
+                            <div><a href="/planning">Планирование посадок</a></div>
                             '. ' '/*print_r($request->toArray(),1)*/.'
                             <div>Посадка растения</div>
                         </body>
