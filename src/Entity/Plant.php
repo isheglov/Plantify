@@ -34,9 +34,21 @@ class Plant
      */
     private $plantings;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="companionTo")
+     */
+    private $companion;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Plant::class, mappedBy="companion")
+     */
+    private $companionTo;
+
     public function __construct()
     {
         $this->plantings = new ArrayCollection();
+        $this->companion = new ArrayCollection();
+        $this->companionTo = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,5 +113,56 @@ class Plant
     public function __toString(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getCompanion(): Collection
+    {
+        return $this->companion;
+    }
+
+    public function addCompanion(self $companion): self
+    {
+        if (!$this->companion->contains($companion)) {
+            $this->companion[] = $companion;
+        }
+
+        return $this;
+    }
+
+    public function removeCompanion(self $companion): self
+    {
+        $this->companion->removeElement($companion);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getCompanionTo(): Collection
+    {
+        return $this->companionTo;
+    }
+
+    public function addCompanionTo(self $companionTo): self
+    {
+        if (!$this->companionTo->contains($companionTo)) {
+            $this->companionTo[] = $companionTo;
+            $companionTo->addCompanion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompanionTo(self $companionTo): self
+    {
+        if ($this->companionTo->removeElement($companionTo)) {
+            $companionTo->removeCompanion($this);
+        }
+
+        return $this;
     }
 }
