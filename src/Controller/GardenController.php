@@ -6,11 +6,13 @@ namespace App\Controller;
 
 use App\Entity\Garden;
 use App\Entity\GardenCell;
+use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
 use App\Repository\PlantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,15 +24,19 @@ final class GardenController extends AbstractController
     private $entityManager;
     /** @var PlantRepository */
     private $plantRepository;
+    /** @var GardenCellRepository */
+    private $gardenCellRepository;
 
     public function __construct(
         GardenRepository $gardenRepository,
+        GardenCellRepository $gardenCellRepository,
         PlantRepository $plantRepository,
         EntityManagerInterface $entityManager
     ) {
         $this->gardenRepository = $gardenRepository;
         $this->plantRepository = $plantRepository;
         $this->entityManager = $entityManager;
+        $this->gardenCellRepository = $gardenCellRepository;
     }
 
     public function index(Request $request): Response
@@ -48,9 +54,9 @@ final class GardenController extends AbstractController
             $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
                 'plantId' => $gardenCell->getPlant()?$gardenCell->getPlant()->getId():'',
                 'plantName' => $gardenCell->getPlant()?$gardenCell->getPlant()->getName():'пусто',
+                'cellId' => $gardenCell->getId(),
             ];
         }
-
 
         return $this->render('garden/index.html.twig', [
             'dimensionX' => $garden->getDimensionX(),
@@ -105,6 +111,18 @@ final class GardenController extends AbstractController
         return $this->render('garden/create.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    public function assignPlantToCell(Request $request, int $cellId, int $plantId): Response
+    {
+        $gardenCell = $this->gardenCellRepository->find($cellId);
+
+        $gardenCell->setPlant($this->plantRepository->find($plantId));
+
+        $this->entityManager->persist($gardenCell);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['ok']);
     }
 
     public function delete(Request $request): Response
