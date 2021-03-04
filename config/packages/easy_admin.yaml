@@ -1,15 +1,42 @@
 easy_admin:
     site_name: Планировщик посадки растений Plantify
+    edit:
+        title: 'Редактировать'
+    new:
+        title: 'Добавить'
 
     design:
         menu:
-            - { route: 'user_index', label: 'Back to the website', icon: 'home' }
+            - { route: 'user_index', label: 'На главную', icon: 'home' }
             - { entity: 'Plant', label: 'Растения', icon: 'tree' }
             - { entity: 'Planting', label: 'Посадка', icon: 'comments' }
             - { entity: 'Region', label: 'Регион', icon: 'map-marker' }
 
     entities:
-        # List the entity class name you want to manage
-        - App\Entity\Plant
-        - App\Entity\Planting
-        - App\Entity\Region
+        Plant:
+            class: App\Entity\Plant
+            label: 'Растения'
+            list:
+                title: "Растения"
+                fields:
+                    - { property: 'name', label: "Название" }
+                    - { property: 'plantings', label: 'Посадка' }
+                    - { property: 'companion', label: 'Можно комбинировать с' }
+            new:
+                title: 'Добавить'
+            edit:
+                title: 'Редактировать'
+        Planting:
+            class: App\Entity\Planting
+        Region:
+            class: App\Entity\Region
+
+#        Comment:
+#            class: App\Entity\Comment
+#            list:
+#                fields:
+#                    - author
+#                    - { property: 'email', type: 'email' }
+#                    - { property: 'createdAt', type: 'datetime' }
+#                sort: [ 'createdAt', 'ASC' ]
+#                filters: [ 'conference' ]
