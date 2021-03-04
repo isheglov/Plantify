@@ -44,11 +44,23 @@ class Plant
      */
     private $companionTo;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="predecessor")
+     */
+    private $follower;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Plant::class, mappedBy="follower")
+     */
+    private $predecessor;
+
     public function __construct()
     {
         $this->plantings = new ArrayCollection();
         $this->companion = new ArrayCollection();
         $this->companionTo = new ArrayCollection();
+        $this->follower = new ArrayCollection();
+        $this->predecessor = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -161,6 +173,57 @@ class Plant
     {
         if ($this->companionTo->removeElement($companionTo)) {
             $companionTo->removeCompanion($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getFollower(): Collection
+    {
+        return $this->follower;
+    }
+
+    public function addFollower(self $follower): self
+    {
+        if (!$this->follower->contains($follower)) {
+            $this->follower[] = $follower;
+        }
+
+        return $this;
+    }
+
+    public function removeFollower(self $follower): self
+    {
+        $this->follower->removeElement($follower);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getPredecessor(): Collection
+    {
+        return $this->predecessor;
+    }
+
+    public function addPredecessor(self $predecessor): self
+    {
+        if (!$this->predecessor->contains($predecessor)) {
+            $this->predecessor[] = $predecessor;
+            $predecessor->addFollower($this);
+        }
+
+        return $this;
+    }
+
+    public function removePredecessor(self $predecessor): self
+    {
+        if ($this->predecessor->removeElement($predecessor)) {
+            $predecessor->removeFollower($this);
         }
 
         return $this;
