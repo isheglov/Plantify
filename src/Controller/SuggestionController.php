@@ -34,7 +34,10 @@ final class SuggestionController extends AbstractController
 
         $plantList = [];
         foreach ($garden->getCellList() as $gardenCell) {
-            if ($gardenCell->getPlant() !== null) {
+            if (
+                $gardenCell->getPlant() !== null
+                && !empty($gardenCell->getPlant()->getCompanion())
+            ) {
                 $plantList[$gardenCell->getPlant()->getId()] = $gardenCell->getPlant();
             }
         }
@@ -45,6 +48,7 @@ final class SuggestionController extends AbstractController
             foreach ($plant->getCompanion() as $companion) {
                 $companionList[] = $companion->getName();
             }
+
 
             $combinedSuggestionList[] = [
                 'plant' => $plant->getName(),

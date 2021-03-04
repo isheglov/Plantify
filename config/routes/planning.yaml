@@ -1,0 +1,3 @@
+planning_index:
+    path: /planning
+    controller: App\Controller\PlanningController::index

@@ -27,7 +27,7 @@ final class UserController
                 '<html>
                         <body>
                             <div><a href="/garden/create">Создание участка</a></div>
-                            <div><a href="/planning">Планирование посадок(в разработке)</a></div>
+                            <div><a href="/planning">Планирование посадок</a></div>
                         </body>
                     </html>'
             );
@@ -37,7 +37,7 @@ final class UserController
             '<html>
                         <body>
                             <div><a href="/garden">К участку</a></div>
-                            <div><a href="/planning">Планирование посадок(в разработке)</a></div>
+                            <div><a href="/planning">Планирование посадок</a></div>
                         </body>
                     </html>'
         );

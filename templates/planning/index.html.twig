@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Plantify</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        table {
+            position: absolute;
+            left: 250px;
+            top: 100px;
+        }
+        h2#t {
+            position: absolute;
+            left: 250px;
+            top: 50px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 30px;
+        }
+        label, input { display:block; }
+        select { margin-bottom:12px; width:95%; padding: .4em; }
+        fieldset { padding:0; border:0; margin-top:25px; }
+        h1 { font-size: 1.2em; margin: .6em 0; }
+        .ui-dialog { padding: .3em; }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+
+    <div>
+        <h1>Планирование посадок</h1>
+        <h2 id="t">Схема участка</h2>
+        <table style="width:1100px">
+            {% for i in 0..dimensionY-1 %}
+                <tr>
+                    {% for j in 0..dimensionX-1 %}
+                        <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
+                            {{ gardenCellList[j][i]['plantName'] }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div>
+        <button id="suggestion">Что дальше сажать</button>
+    </div>
+    <div><a href="/">На главную</a></div>
+</body>
+</html>
