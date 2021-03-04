@@ -46,6 +46,15 @@ class Plant
 
     /**
      * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="predecessor")
+     * @ORM\JoinTable(
+     *  name="plant_plant_followers",
+     *  joinColumns={
+     *      @ORM\JoinColumn(name="plant_source", referencedColumnName="id")
+     *  },
+     *  inverseJoinColumns={
+     *      @ORM\JoinColumn(name="plant_target", referencedColumnName="id")
+     *  }
+     * )
      */
     private $follower;
 

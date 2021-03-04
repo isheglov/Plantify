@@ -21,11 +21,18 @@ easy_admin:
                 fields:
                     - { property: 'name', label: "Название" }
                     - { property: 'plantings', label: 'Посадка' }
+                    - { property: 'follower', label: 'Потом сажать' }
                     - { property: 'companion', label: 'Можно комбинировать с' }
             new:
                 title: 'Добавить'
             edit:
                 title: 'Редактировать'
+                fields:
+                    - { property: 'name', label: "Название" }
+                    - { property: 'description', label: 'Описание' }
+                    - { property: 'plantings', label: 'Посадка' }
+                    - { property: 'follower', label: 'Потом сажать' }
+                    - { property: 'companion', label: 'Можно комбинировать с' }
         Planting:
             class: App\Entity\Planting
         Region:
