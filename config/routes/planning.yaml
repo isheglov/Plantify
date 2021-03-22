@@ -1,3 +1,9 @@
 planning_index:
     path: /planning
     controller: App\Controller\PlanningController::index
+    methods: GET
+
+planning_create:
+    path: /planning
+    controller: App\Controller\PlanningController::create
+    methods: POST

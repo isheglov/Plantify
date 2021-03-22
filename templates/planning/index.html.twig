@@ -32,7 +32,33 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 <body>
+    <div id="dialog-form" title="Что дальше сажать">
+        <form>
+            <fieldset>
+                    {% for plant in plantList %}
+                        <div style="border: solid">
+                            <label for="checked_{{ plant.id }}">{{ plant.name }}</label><input type="checkbox" id="checked_{{ plant.id }}" name="plant_chb" value="screen">
+                            <select name="cell" id="cell_amount_{{ plant.id }}" class="select text ui-widget-content ui-corner-all">
+                                <option value="1">1 грядка</option>
+                                <option value="2">2 грядки</option>
+                                <option value="3">3 грядки</option>
+                                <option value="4">4 грядки</option>
+                                <option value="5">5 грядок</option>
+                                <option value="6">6 грядок</option>
+                                <option value="7">7 грядок</option>
+                                <option value="8">8 грядок</option>
+                                <option value="9">9 грядок</option>
+                                <option value="10">10 грядок</option>
+                            </select>
+                        </div>
+                    {% endfor %}
 
+
+
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
     <div>
         <h1>Планирование посадок</h1>
         <h2 id="t">Схема участка</h2>
@@ -52,5 +78,80 @@
         <button id="suggestion">Что дальше сажать</button>
     </div>
     <div><a href="/">На главную</a></div>
+
+
+    <script>
+        jQuery( function() {
+            var clickedId;
+            var dialog, form, combined;
+
+            function setPlant() {
+                let jsonText = '{ "plantList" : [';
+                jQuery( "[name^=plant_chb]:checked ").each(function addCombinedSuggestion (index) {
+                    let plantId = $($( this )[0]).attr('id').replace('checked_','');
+                    let plantAmount = $("#cell_amount_"+plantId).val();
+
+                    jsonText += '{ "plantId":'+plantId+', "plantAmount":'+plantAmount+' },';
+                });
+                jsonText = jsonText.substring(0,jsonText.length - 1);
+                jsonText += ']}';
+
+                let obj = JSON.parse(jsonText);
+
+                console.log(obj);
+
+                $.ajax({
+                    url: '/planning',
+                    type: 'POST',
+                    data: jsonText,
+                    success: function(result) {
+                        console.log(result);
+                    }
+                });
+
+                dialog.dialog( "close" );
+            }
+
+            function parseCompanionsJson(json) {
+                json.forEach(addCombinedSuggestion);
+
+                function addCombinedSuggestion (item) {
+                    const companionList = item.companionList.join(', ');
+
+                    let text = "<div>Для <strong>"+item.plant+"</strong> подходит "+companionList+".</div>";
+                    $("#combined-suggestion").append(text);
+                }
+            }
+
+            dialog = jQuery( "#dialog-form" ).dialog({
+                autoOpen: false,
+                height: 400,
+                width: 350,
+                modal: true,
+                buttons: {
+                    "Сохранить": setPlant,
+                    Cancel: function() {
+                        dialog.dialog( "close" );
+                    }
+                },
+                close: function() {
+                    form[ 0 ].reset();
+                }
+            });
+
+
+            form = dialog.find( "form" ).on( "submit", function( event ) {
+                event.preventDefault();
+                setPlant();
+            });
+
+            jQuery( "[id=suggestion]" ).on( "click", function() {
+                dialog.dialog( "open" );
+                console.log($(this).data());
+                clickedId = 'cell' + $(this).data().cellid;
+            });
+
+        } );
+    </script>
 </body>
 </html>

@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Garden;
-use App\Entity\GardenCell;
 use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
 use App\Repository\PlantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,13 +39,11 @@ final class PlanningController extends AbstractController
 
     public function index(Request $request): Response
     {
-        $gardenList = $this->gardenRepository->findAll();
+        $garden = $this->getGarden();
 
-        if(empty($gardenList)) {
+        if ($garden === null) {
             return $this->redirectToRoute('user_index');
         }
-
-        $garden = end($gardenList);
 
         $gardenCellList = [];
         foreach ($garden->getCellList() as $gardenCell) {
@@ -66,4 +62,52 @@ final class PlanningController extends AbstractController
         ]);
     }
 
+    public function create(Request $request): Response
+    {
+        $content = $request->getContent();
+
+        $plantAmountMap = json_decode($content, true);
+
+        $nextYearPlantList = [];
+
+        foreach ($plantAmountMap['plantList'] as $plantAmount) {
+            $nextYearPlantList[] = $plantAmount['plantId'];
+//            echo $plantAmount['plantAmount'];
+        }
+
+//        die();
+
+        // get next for id
+        // return
+        /** @var Garden $garden */
+        $garden = $this->getGarden();
+
+        $gardenCellList = [];
+        $planning = [];
+        foreach ($garden->getCellList() as $gardenCell) {
+            if (null === $gardenCell->getPlant()) {
+                continue;
+            }
+
+            foreach ($gardenCell->getPlant()->getFollower() as $follower) {
+                if (in_array($follower->getId(), $nextYearPlantList)) {
+                    $planning[$gardenCell->getPlant()->getId()] = $follower->getId();
+                }
+            }
+        }
+
+        return new JsonResponse($planning);
+    }
+
+    /**
+     * @return Garden
+     */
+    private function getGarden(): ?Garden
+    {
+        $gardenList = $this->gardenRepository->findAll();
+
+
+
+        return end($gardenList);
+    }
 }
