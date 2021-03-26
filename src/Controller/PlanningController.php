@@ -91,12 +91,22 @@ final class PlanningController extends AbstractController
 
             foreach ($gardenCell->getPlant()->getFollower() as $follower) {
                 if (in_array($follower->getId(), $nextYearPlantList)) {
-                    $planning[$gardenCell->getPlant()->getId()] = $follower->getId();
+                    $planning[] = [
+                        'cellId' => $gardenCell->getId(),
+                        'plantId' => $follower->getId(),
+                        'plantName' => $follower->getName(),
+                        'priority' => 4,
+                    ];
                 }
             }
         }
 
-        return new JsonResponse($planning);
+
+//        result = '{"map":[{"cellId":172,"plantId":12,"plantName":"Укроп","priority":4}]}';
+
+        $map = ['map' => $planning];
+
+        return new JsonResponse($map);
     }
 
     /**

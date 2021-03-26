@@ -81,6 +81,9 @@
 
 
     <script>
+
+
+
         jQuery( function() {
             var clickedId;
             var dialog, form, combined;
@@ -98,14 +101,23 @@
 
                 let obj = JSON.parse(jsonText);
 
-                console.log(obj);
+                // console.log(obj);
 
                 $.ajax({
                     url: '/planning',
                     type: 'POST',
                     data: jsonText,
-                    success: function(result) {
-                        console.log(result);
+                    success: function(planMap) {
+
+                        // result = '{"map":[{"cellId":172,"plantId":12,"plantName":"Укроп","priority":4}]}';
+
+                        console.log(planMap);
+                        planMap.map.forEach(function (item) {
+                            let cell = $('#cell'+item.cellId);
+                            cell.append(
+                                '<input type="radio" id="plan_chb_'+item.cellId+'"/><p style="color:green">'+item.plantName+'</p>'
+                            );
+                        });
                     }
                 });
 
