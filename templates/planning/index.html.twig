@@ -2,30 +2,14 @@
 <html lang="ru">
 <head>
     <title>Plantify</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <style>
-        table {
-            position: absolute;
-            left: 250px;
-            top: 100px;
-        }
-        h2#t {
-            position: absolute;
-            left: 250px;
-            top: 50px;
-        }
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 30px;
-        }
         label, input { display:block; }
-        select { margin-bottom:12px; width:95%; padding: .4em; }
         fieldset { padding:0; border:0; margin-top:25px; }
         h1 { font-size: 1.2em; margin: .6em 0; }
-        .ui-dialog { padding: .3em; }
     </style>
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -36,9 +20,10 @@
         <form>
             <fieldset>
                     {% for plant in plantList %}
-                        <div style="border: solid">
-                            <label for="checked_{{ plant.id }}">{{ plant.name }}</label><input type="checkbox" id="checked_{{ plant.id }}" name="plant_chb" value="screen">
-                            <select name="cell" id="cell_amount_{{ plant.id }}" class="select text ui-widget-content ui-corner-all">
+                        <div class="modal-item">
+                            <input type="checkbox" id="checked_{{ plant.id }}" name="plant_chb" value="screen" class="checkbox">
+                            <label for="checked_{{ plant.id }}" class="label">{{ plant.name }}</label>
+                            <select name="cell" id="cell_amount_{{ plant.id }}" class="select">
                                 <option value="1">1 грядка</option>
                                 <option value="2">2 грядки</option>
                                 <option value="3">3 грядки</option>
@@ -52,32 +37,41 @@
                             </select>
                         </div>
                     {% endfor %}
-
-
-
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
             </fieldset>
         </form>
     </div>
+
+    <div class="nav-bar">
+        <div>
+            <button class='nav-bar-item' id="suggestion">Что дальше сажать</button>
+        </div>
+        <div>
+            <a class='nav-bar-item' href="/">На главную</a>
+        </div>
+    </div>
+
+    <h1 class="title">Планирование посадок</h1>
+
     <div>
-        <h1>Планирование посадок</h1>
+
+
+
         <h2 id="t">Схема участка</h2>
-        <table style="width:1100px">
+        <table>
             {% for i in 0..dimensionY-1 %}
                 <tr>
                     {% for j in 0..dimensionX-1 %}
                         <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
-                            {{ gardenCellList[j][i]['plantName'] }}
+                            <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content">
+                                <h4>{{ gardenCellList[j][i]['plantName'] }}</h4>
+                            </div>
                         </td>
                     {% endfor %}
                 </tr>
             {% endfor %}
         </table>
     </div>
-    <div>
-        <button id="suggestion">Что дальше сажать</button>
-    </div>
-    <div><a href="/">На главную</a></div>
 
 
     <script>
@@ -112,11 +106,13 @@
                         // result = '{"map":[{"cellId":172,"plantId":12,"plantName":"Укроп","priority":4}]}';
 
                         console.log(planMap);
+                        var i = 0;
                         planMap.map.forEach(function (item) {
-                            let cell = $('#cell'+item.cellId);
+                            let cell = $('.cell-content'+item.cellId);
                             cell.append(
-                                '<input type="radio" id="plan_chb_'+item.cellId+'"/><p style="color:green">'+item.plantName+'</p>'
+                                '<div class="suggestion-item"><input name="suggestion-radio-'+item.cellId+'" type="radio" id="suggestion-radio-'+item.cellId+'-'+i+'"/><label for="suggestion-radio-'+item.cellId+'-'+i+'" style="color:green">'+item.plantName+'</label></div>'
                             );
+                            i++;
                         });
                     }
                 });

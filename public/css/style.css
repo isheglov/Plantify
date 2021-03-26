@@ -1,0 +1,72 @@
+body {
+    font-family: "Roboto", sans-serif;
+}
+
+/* table */
+table {
+    margin: 0 auto;
+    border: none;
+}
+
+td {
+    width: 300px;
+    height: 200px;
+    border: none;
+    padding: 30px;
+}
+
+.cell-content {
+    border: 1px solid black;
+    border-radius: 10px;
+    height: 100%;
+    padding: 20px;
+}
+
+h2#t {
+    text-align: center;
+}
+
+.nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.nav-bar-item {
+    margin-right: 15px;
+    width: 200px;
+    height: 60px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background: #1ea471;
+    color: #fff;
+    font-size: 18px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.title {
+    text-align: center;
+}
+
+/* modal window */
+.modal-item { display: flex; align-items: center; justify-content: start; margin-bottom: 15px;}
+.checkbox {margin-right: 5px;}
+.label {max-width: 150px; margin-right: 10px; display: block; width: 150px;}
+.select {max-width: 100px;}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-bottom: 15px;
+    height: 25px;
+}
+
+.suggestion-item input {
+    margin-right: 5px;
+}
