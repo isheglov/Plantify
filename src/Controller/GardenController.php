@@ -127,8 +127,6 @@ final class GardenController extends AbstractController
 
     public function delete(Request $request): Response
     {
-        return $this->redirectToRoute('user_index');
-
         foreach ($this->gardenRepository->findAll() as $garden) {
             foreach ($garden->getCellList() as $gardenCell) {
                 $this->entityManager->remove($gardenCell);

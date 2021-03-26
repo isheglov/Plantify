@@ -2,7 +2,7 @@ body {
     font-family: "Roboto", sans-serif;
 }
 
-/* table */
+/* garden */
 table {
     margin: 0 auto;
     border: none;
@@ -10,7 +10,7 @@ table {
 
 td {
     width: 300px;
-    height: 200px;
+    height: 150px;
     border: none;
     padding: 30px;
 }
@@ -21,7 +21,10 @@ td {
     height: 100%;
     padding: 20px;
 }
+/* garden */
 
+
+/* menu */
 h2#t {
     text-align: center;
 }
@@ -34,7 +37,7 @@ h2#t {
 
 .nav-bar-item {
     margin-right: 15px;
-    width: 200px;
+    width: 230px;
     height: 60px;
     text-align: center;
     border: none;
@@ -47,18 +50,21 @@ h2#t {
     align-items: center;
     justify-content: center;
 }
-
+/* menu */
 
 .title {
     text-align: center;
 }
 
 /* modal window */
+fieldset { padding:0; border:0; margin-top:25px; }
 .modal-item { display: flex; align-items: center; justify-content: start; margin-bottom: 15px;}
 .checkbox {margin-right: 5px;}
 .label {max-width: 150px; margin-right: 10px; display: block; width: 150px;}
 .select {max-width: 100px;}
+/* modal window */
 
+/* planning */
 .suggestion-item {
     display: flex;
     align-items: center;
@@ -70,3 +76,4 @@ h2#t {
 .suggestion-item input {
     margin-right: 5px;
 }
+/* planning */

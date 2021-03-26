@@ -6,12 +6,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="../../css/style.css">
-    <style>
-        label, input { display:block; }
-        fieldset { padding:0; border:0; margin-top:25px; }
-        h1 { font-size: 1.2em; margin: .6em 0; }
-    </style>
-
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
@@ -54,9 +48,6 @@
     <h1 class="title">Планирование посадок</h1>
 
     <div>
-
-
-
         <h2 id="t">Схема участка</h2>
         <table>
             {% for i in 0..dimensionY-1 %}
@@ -73,11 +64,7 @@
         </table>
     </div>
 
-
     <script>
-
-
-
         jQuery( function() {
             var clickedId;
             var dialog, form, combined;
@@ -110,10 +97,25 @@
                         planMap.map.forEach(function (item) {
                             let cell = $('.cell-content'+item.cellId);
                             cell.append(
-                                '<div class="suggestion-item"><input name="suggestion-radio-'+item.cellId+'" type="radio" id="suggestion-radio-'+item.cellId+'-'+i+'"/><label for="suggestion-radio-'+item.cellId+'-'+i+'" style="color:green">'+item.plantName+'</label></div>'
+                                '<div class="suggestion-item">' +
+                                '<input name="suggestion-radio-'+item.cellId+'" type="radio" id="suggestion-radio-'+item.cellId+'-'+i+'"/>' +
+                                '<label for="suggestion-radio-'+item.cellId+'-'+i+'" style="color:green">'+item.plantName+'</label>' +
+                                '</div>'
                             );
                             i++;
                         });
+
+                        var cellList = new Array();
+                        planMap.map.forEach(function (item) {
+                            cellList[item.cellId] = 1;
+                        });
+
+                        console.log(cellList);
+                        cellList.forEach(function (item, index) {
+                            let cell = $('.cell-content'+index);
+                            cell.append('<button id="save-btn-'+index+'">сохранить</button>');
+                        });
+
                     }
                 });
 
