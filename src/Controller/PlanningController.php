@@ -75,10 +75,6 @@ final class PlanningController extends AbstractController
 //            echo $plantAmount['plantAmount'];
         }
 
-//        die();
-
-        // get next for id
-        // return
         /** @var Garden $garden */
         $garden = $this->getGarden();
 
@@ -110,13 +106,31 @@ final class PlanningController extends AbstractController
     }
 
     /**
+     * { "plantId":1, "cellId":190 }
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function save(Request $request): Response
+    {
+        // add planning line
+
+        // cell_id
+        // plant_id
+        // plant_at
+        // status: [planned, planted]
+        // created_at
+        // updated_at
+
+        return new JsonResponse(['ok']);
+    }
+
+    /**
      * @return Garden
      */
     private function getGarden(): ?Garden
     {
         $gardenList = $this->gardenRepository->findAll();
-
-
 
         return end($gardenList);
     }

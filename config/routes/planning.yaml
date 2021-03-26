@@ -7,3 +7,8 @@ planning_create:
     path: /planning
     controller: App\Controller\PlanningController::create
     methods: POST
+
+planning_save:
+    path: /planning/save
+    controller: App\Controller\PlanningController::save
+    methods: POST

@@ -1,0 +1,18 @@
+###
+POST https://127.0.0.1:8000/planning
+Content-Type: application/json
+
+{
+  "plantList" : [
+    {
+      "plantId" : 1,
+      "plantAmount" : 1
+    }
+  ]
+}
+
+###
+POST https://127.0.0.1:8000/planning/save
+Content-Type: application/json
+
+{ "plantId":1, "cellId":190 }

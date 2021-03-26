@@ -67,7 +67,7 @@
     <script>
         jQuery( function() {
             var clickedId;
-            var dialog, form, combined;
+            var dialog, form;
 
             function setPlant() {
                 let jsonText = '{ "plantList" : [';
@@ -80,32 +80,25 @@
                 jsonText = jsonText.substring(0,jsonText.length - 1);
                 jsonText += ']}';
 
-                let obj = JSON.parse(jsonText);
-
-                // console.log(obj);
-
                 $.ajax({
                     url: '/planning',
                     type: 'POST',
                     data: jsonText,
                     success: function(planMap) {
-
                         // result = '{"map":[{"cellId":172,"plantId":12,"plantName":"Укроп","priority":4}]}';
-
-                        console.log(planMap);
                         var i = 0;
                         planMap.map.forEach(function (item) {
                             let cell = $('.cell-content'+item.cellId);
                             cell.append(
                                 '<div class="suggestion-item">' +
-                                '<input name="suggestion-radio-'+item.cellId+'" type="radio" id="suggestion-radio-'+item.cellId+'-'+i+'"/>' +
+                                '<input value="'+item.plantId+'" name="suggestion-radio-'+item.cellId+'" type="radio" id="suggestion-radio-'+item.cellId+'-'+i+'"/>' +
                                 '<label for="suggestion-radio-'+item.cellId+'-'+i+'" style="color:green">'+item.plantName+'</label>' +
                                 '</div>'
                             );
                             i++;
                         });
 
-                        var cellList = new Array();
+                        let cellList = [];
                         planMap.map.forEach(function (item) {
                             cellList[item.cellId] = 1;
                         });
@@ -113,24 +106,32 @@
                         console.log(cellList);
                         cellList.forEach(function (item, index) {
                             let cell = $('.cell-content'+index);
-                            cell.append('<button id="save-btn-'+index+'">сохранить</button>');
+                            cell.append('<button class="save-btn" id="save-btn-'+index+'">сохранить</button>');
                         });
 
+                        $( ".save-btn" ).on( "click", saveSuggestion);
                     }
                 });
 
                 dialog.dialog( "close" );
             }
 
-            function parseCompanionsJson(json) {
-                json.forEach(addCombinedSuggestion);
+            function saveSuggestion() {
+                let cellId = $( this ).attr('id').replace('save-btn-','');
 
-                function addCombinedSuggestion (item) {
-                    const companionList = item.companionList.join(', ');
+                let plantId = $('input[name="suggestion-radio-'+cellId+'"]:checked').val()
 
-                    let text = "<div>Для <strong>"+item.plant+"</strong> подходит "+companionList+".</div>";
-                    $("#combined-suggestion").append(text);
-                }
+                let jsonText = '{ "plantId":'+plantId+', "cellId":'+cellId+' }';
+
+                $.ajax({
+                    url: '/planning/save',
+                    type: 'POST',
+                    data: jsonText,
+                    success: function(response) {
+                        console.log('success')
+                        console.log(response)
+                    }
+                });
             }
 
             dialog = jQuery( "#dialog-form" ).dialog({
@@ -149,7 +150,6 @@
                 }
             });
 
-
             form = dialog.find( "form" ).on( "submit", function( event ) {
                 event.preventDefault();
                 setPlant();
@@ -157,9 +157,9 @@
 
             jQuery( "[id=suggestion]" ).on( "click", function() {
                 dialog.dialog( "open" );
-                console.log($(this).data());
                 clickedId = 'cell' + $(this).data().cellid;
             });
+
 
         } );
     </script>
