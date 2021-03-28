@@ -9,6 +9,7 @@ use App\Entity\Planning;
 use App\Entity\Planting;
 use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
+use App\Repository\PlanningRepository;
 use App\Repository\PlantRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,17 +28,21 @@ final class PlanningController extends AbstractController
     private $plantRepository;
     /** @var GardenCellRepository */
     private $gardenCellRepository;
+    /** @var PlanningRepository */
+    private $planningRepository;
 
     public function __construct(
         GardenRepository $gardenRepository,
         GardenCellRepository $gardenCellRepository,
         PlantRepository $plantRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        PlanningRepository $planningRepository
     ) {
         $this->gardenRepository = $gardenRepository;
         $this->plantRepository = $plantRepository;
         $this->entityManager = $entityManager;
         $this->gardenCellRepository = $gardenCellRepository;
+        $this->planningRepository = $planningRepository;
     }
 
     public function index(Request $request): Response
@@ -50,10 +55,17 @@ final class PlanningController extends AbstractController
 
         $gardenCellList = [];
         foreach ($garden->getCellList() as $gardenCell) {
+
+            /** @var Planning $plan */
+            $planningList = $this->planningRepository->findBy(['cell' => $gardenCell->getId()]);
+            $plan = empty($planningList) ? '' : end($planningList);
+
             $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
                 'plantId' => $gardenCell->getPlant()?$gardenCell->getPlant()->getId():'',
                 'plantName' => $gardenCell->getPlant()?$gardenCell->getPlant()->getName():'пусто',
                 'cellId' => $gardenCell->getId(),
+//                'plannedPlantId' => 1, //potato
+                'plannedPlantName' => $plan ? $plan->getPlant()->getName() : '',
             ];
         }
 
@@ -152,6 +164,9 @@ final class PlanningController extends AbstractController
             ->setCreatedAt(new DateTime())
             ->setUpdatedAt(new DateTime())
         ;
+
+        $this->entityManager->persist($planning);
+        $this->entityManager->flush();
 
         return new JsonResponse(['ok']);
     }

@@ -56,6 +56,7 @@
                         <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
                             <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content">
                                 <h4>{{ gardenCellList[j][i]['plantName'] }}</h4>
+                                <h4>Запланировано: {{ gardenCellList[j][i]['plannedPlantName'] }}</h4>
                             </div>
                         </td>
                     {% endfor %}
@@ -129,7 +130,12 @@
                     data: jsonText,
                     success: function(response) {
                         console.log('success')
+
                         console.log(response)
+
+                        // hack
+                        location.reload();
+
                     }
                 });
             }
