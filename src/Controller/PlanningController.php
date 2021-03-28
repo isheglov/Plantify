@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Garden;
+use App\Entity\Planning;
+use App\Entity\Planting;
 use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
 use App\Repository\PlantRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -113,6 +116,10 @@ final class PlanningController extends AbstractController
      */
     public function save(Request $request): Response
     {
+        $content = $request->getContent();
+
+        $plantCellMap = json_decode($content, true);
+
         // add planning line
 
         // cell_id
@@ -121,6 +128,30 @@ final class PlanningController extends AbstractController
         // status: [planned, planted]
         // created_at
         // updated_at
+
+        $plant = $this->plantRepository->find($plantCellMap['plantId']);
+
+        $plantingList = $plant->getPlantings();
+
+        if (empty($plantingList)) {
+            return new JsonResponse(['error']);
+        }
+
+        /** @var Planting $planting */
+        $planting = $plantingList->first();
+
+//        $plantAt = $planting->getPlantingMonth() + next year;
+        $plantAt = new DateTime();
+
+        $planning = (new Planning())
+            ->setCell($this->gardenCellRepository->find($plantCellMap['cellId']))
+            ->setPlant($plant)
+            ->setPlantAt($plantAt)
+            ->setStatus('planned')
+            ->setComment('usual planting')
+            ->setCreatedAt(new DateTime())
+            ->setUpdatedAt(new DateTime())
+        ;
 
         return new JsonResponse(['ok']);
     }
