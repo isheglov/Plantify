@@ -206,7 +206,7 @@ final class PlanningController extends AbstractController
             'декабрь' => 12,
         ];
 
-        return $monthMap[strtolower($planting->getPlantingMonth())];
+        return $monthMap[mb_strtolower($planting->getPlantingMonth())];
     }
 
     /**
