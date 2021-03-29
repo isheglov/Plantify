@@ -79,7 +79,7 @@
                 let jsonText = '{ "plantList" : [';
                 jQuery( "[name^=plant_chb]:checked ").each(function addCombinedSuggestion (index) {
                     let plantId = $($( this )[0]).attr('id').replace('checked_','');
-                    let plantAmount = $("#cell_amount_"+plantId).val();
+                    let plantAmount = $("#cell_amount_"+plantId).val() ? $("#cell_amount_"+plantId).val() : 1;
 
                     jsonText += '{ "plantId":'+plantId+', "plantAmount":'+plantAmount+' },';
                 });
