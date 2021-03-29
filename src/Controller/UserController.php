@@ -38,6 +38,10 @@ final class UserController
                                 <div>
                                     <a class="nav-bar-item" href="/planning">Планирование посадок</a>
                                 </div>
+                                <div>
+                                    <a class="nav-bar-item" href="/todo">To-do лист</a>
+                                </div>
+                            </div>
                             </div>
                         </body>
                     </html>'
@@ -57,7 +61,10 @@ final class UserController
                                     <a class="nav-bar-item" href="/garden">К участку</a>
                                 </div>
                                 <div>
-                                    <a class="nav-bar-item" href="/planning">Планирование посадок</a>
+                                    <a class="nav-bar-item" href="/planning">Планировать новые посадки</a>
+                                </div>
+                                <div>
+                                    <a class="nav-bar-item" href="/todo">To-do лист</a>
                                 </div>
                             </div>
                         </body>

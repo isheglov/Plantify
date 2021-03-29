@@ -66,6 +66,7 @@ final class PlanningController extends AbstractController
                 'cellId' => $gardenCell->getId(),
 //                'plannedPlantId' => 1, //potato
                 'plannedPlantName' => $plan ? $plan->getPlant()->getName() : '',
+                'plannedPlantAt' => $plan ? $plan->getPlantAt()->format('Y-m') : '',
             ];
         }
 
@@ -132,15 +133,6 @@ final class PlanningController extends AbstractController
 
         $plantCellMap = json_decode($content, true);
 
-        // add planning line
-
-        // cell_id
-        // plant_id
-        // plant_at
-        // status: [planned, planted]
-        // created_at
-        // updated_at
-
         $plant = $this->plantRepository->find($plantCellMap['plantId']);
 
         $plantingList = $plant->getPlantings();
@@ -152,8 +144,7 @@ final class PlanningController extends AbstractController
         /** @var Planting $planting */
         $planting = $plantingList->first();
 
-//        $plantAt = $planting->getPlantingMonth() + next year;
-        $plantAt = new DateTime();
+        $plantAt = $this->obtainPlantingDate($planting);
 
         $planning = (new Planning())
             ->setCell($this->gardenCellRepository->find($plantCellMap['cellId']))
@@ -179,5 +170,57 @@ final class PlanningController extends AbstractController
         $gardenList = $this->gardenRepository->findAll();
 
         return end($gardenList);
+    }
+
+    /**
+     * @param Planting $planting
+     * @return DateTime
+     */
+    private function obtainPlantingDate(Planting $planting): DateTime
+    {
+        $monthPlanned = $this->obtainMonth($planting);
+
+        $yearPlanned = $this->obtainPlantingYear($monthPlanned);
+
+        return (new DateTime())->setDate($yearPlanned, $monthPlanned, 1);
+    }
+
+    /**
+     * @param Planting $planting
+     * @return int
+     */
+    private function obtainMonth(Planting $planting): int
+    {
+        $monthMap = [
+            'январь' => 1,
+            'февраль' => 2,
+            'март' => 3,
+            'апрель' => 4,
+            'май' => 5,
+            'июнь' => 6,
+            'июль' => 7,
+            'август' => 8,
+            'сентябрь' => 9,
+            'октябрь' => 10,
+            'ноябрь' => 11,
+            'декабрь' => 12,
+        ];
+
+        return $monthMap[strtolower($planting->getPlantingMonth())];
+    }
+
+    /**
+     * @param int $monthPlanned
+     * @return int
+     */
+    private function obtainPlantingYear(int $monthPlanned): int
+    {
+        $monthCurrent = (int)date("m");
+
+        if ($monthCurrent > $monthPlanned) {
+            return (int)date("Y") + 1;
+        }
+
+        return (int)date("Y");
     }
 }

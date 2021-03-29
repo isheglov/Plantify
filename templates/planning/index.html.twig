@@ -17,18 +17,18 @@
                         <div class="modal-item">
                             <input type="checkbox" id="checked_{{ plant.id }}" name="plant_chb" value="screen" class="checkbox">
                             <label for="checked_{{ plant.id }}" class="label">{{ plant.name }}</label>
-                            <select name="cell" id="cell_amount_{{ plant.id }}" class="select">
-                                <option value="1">1 грядка</option>
-                                <option value="2">2 грядки</option>
-                                <option value="3">3 грядки</option>
-                                <option value="4">4 грядки</option>
-                                <option value="5">5 грядок</option>
-                                <option value="6">6 грядок</option>
-                                <option value="7">7 грядок</option>
-                                <option value="8">8 грядок</option>
-                                <option value="9">9 грядок</option>
-                                <option value="10">10 грядок</option>
-                            </select>
+{#                            <select name="cell" id="cell_amount_{{ plant.id }}" class="select">#}
+{#                                <option value="1">1 грядка</option>#}
+{#                                <option value="2">2 грядки</option>#}
+{#                                <option value="3">3 грядки</option>#}
+{#                                <option value="4">4 грядки</option>#}
+{#                                <option value="5">5 грядок</option>#}
+{#                                <option value="6">6 грядок</option>#}
+{#                                <option value="7">7 грядок</option>#}
+{#                                <option value="8">8 грядок</option>#}
+{#                                <option value="9">9 грядок</option>#}
+{#                                <option value="10">10 грядок</option>#}
+{#                            </select>#}
                         </div>
                     {% endfor %}
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
@@ -43,6 +43,9 @@
         <div>
             <a class='nav-bar-item' href="/">На главную</a>
         </div>
+        <div>
+            <a class="nav-bar-item" href="/todo">To-do лист</a>
+        </div>
     </div>
 
     <h1 class="title">Планирование посадок</h1>
@@ -56,7 +59,9 @@
                         <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
                             <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content">
                                 <h4>{{ gardenCellList[j][i]['plantName'] }}</h4>
-                                <h4>Запланировано: {{ gardenCellList[j][i]['plannedPlantName'] }}</h4>
+                                {% if gardenCellList[j][i]['plannedPlantName'] != '' %}
+                                    <h4>(План: {{ gardenCellList[j][i]['plannedPlantName'] }} {{ gardenCellList[j][i]['plannedPlantAt'] }})</h4>
+                                {% endif %}
                             </div>
                         </td>
                     {% endfor %}

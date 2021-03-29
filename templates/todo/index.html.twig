@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Plantify</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+
+<div class="nav-bar">
+    <div>
+        <a class='nav-bar-item' href="/">На главную</a>
+    </div>
+    <div>
+        <a class="nav-bar-item" href="/planning">Планировать новые посадки</a>
+    </div>
+</div>
+
+<h1 class="title">План посадок</h1>
+
+{% for todo in todoList %}
+    <div class="modal-item">
+        <input type="checkbox" id="checked_{{ todo.id }}" name="plant_chb" value="screen" class="checkbox">
+        <label for="checked_{{ todo.id }}" ><b>{{ todo.date }}</b> {{ todo.name }} </label>
+        <a href="/planning">На схеме</a>
+    </div>
+{% endfor %}
+
+</body>
+</html>
