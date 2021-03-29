@@ -3,31 +3,10 @@
 <head>
     <title>Plantify</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <style>
-        table {
-            position: absolute;
-            left: 250px;
-            top: 100px;
-        }
-        h2#t {
-            position: absolute;
-            left: 250px;
-            top: 50px;
-        }
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 30px;
-        }
-        label, input { display:block; }
-        select { margin-bottom:12px; width:95%; padding: .4em; }
-        fieldset { padding:0; border:0; margin-top:25px; }
-        h1 { font-size: 1.2em; margin: .6em 0; }
-        .ui-dialog { padding: .3em; }
-    </style>
-
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
@@ -57,18 +36,40 @@
     </form>
 </div>
 
+
+<div class="nav-bar">
+    <div>
+        <form action="/garden/delete" method="post">
+            <button  class='nav-bar-item' id="delete" onclick="return confirm('Удалить участок?')">Удалить</button>
+        </form>
+    </div>
+    <div>
+        <button class='nav-bar-item' id="combined">Комбинированные посадки</button>
+    </div>
+    <div>
+        <a class='nav-bar-item' href="/">На главную</a>
+    </div>
+    <div>
+        <a class="nav-bar-item" href="/todo">To-do лист</a>
+    </div>
+</div>
+
+
+
 <div>
 <h2 id="t">Схема участка</h2>
-<table style="width:1100px">
+<table>
     {% for i in 0..dimensionY-1 %}
         <tr>
             {% for j in 0..dimensionX-1 %}
                 <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
-{#                    {{ gardenCellList[j][i]['plantId'] }}#}
-                    <img id="edit" data-cellid="{{ gardenCellList[j][i]['cellId'] }}" data-plantId="{{ gardenCellList[j][i]['plantId'] }}" src="./img/edit.svg" alt="edit" height="25px" width="25px"/>
-                    <img id="question" data-cellid="{{ gardenCellList[j][i]['cellId'] }}" data-plantId="{{ gardenCellList[j][i]['plantId'] }}" src="./img/q.svg" alt="?" height="25px" width="25px"/>
+                    <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content">
 
-                    <div>{{ gardenCellList[j][i]['plantName'] }}</div>
+                        <img id="edit" data-cellid="{{ gardenCellList[j][i]['cellId'] }}" data-plantId="{{ gardenCellList[j][i]['plantId'] }}" src="./img/edit.svg" alt="edit" height="25px" width="25px"/>
+                        <img id="question" data-cellid="{{ gardenCellList[j][i]['cellId'] }}" data-plantId="{{ gardenCellList[j][i]['plantId'] }}" src="./img/q.svg" alt="?" height="25px" width="25px"/>
+
+                        <div>{{ gardenCellList[j][i]['plantName'] }}</div>
+                    </div>
                 </td>
             {% endfor %}
         </tr>
@@ -76,15 +77,6 @@
 </table>
 </div>
 
-
-
-<div>
-<button id="combined">Комбинированные посадки</button>
-</div>
-<form action="/garden/delete" method="post">
-    <button id="delete">Удалить</button>
-</form>
-<div><a href="/">На главную</a></div>
 
 <script>
     jQuery( function() {
