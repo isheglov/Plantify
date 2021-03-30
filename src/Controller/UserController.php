@@ -35,12 +35,6 @@ final class UserController
                                 <div>
                                     <a class="nav-bar-item" href="/garden/create">Создание участка</a>
                                 </div>
-                                <div>
-                                    <a class="nav-bar-item" href="/planning">Планирование посадок</a>
-                                </div>
-                                <div>
-                                    <a class="nav-bar-item" href="/todo">To-do лист</a>
-                                </div>
                             </div>
                             </div>
                         </body>

@@ -11,11 +11,14 @@ use App\Repository\GardenRepository;
 use App\Repository\PlanningRepository;
 use App\Repository\PlantRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 
 final class GardenController extends AbstractController
 {
@@ -74,8 +77,20 @@ final class GardenController extends AbstractController
     public function create(Request $request): Response
     {
         $form = $this->createFormBuilder()
-            ->add('rows', IntegerType::class, ['label' => 'Строк'])
-            ->add('cells', IntegerType::class, ['label' => 'Столбцов'])
+            ->add('rows', IntegerType::class, [
+                'label' => 'Строк',
+                'constraints' => [
+                    new LessThanOrEqual(10),
+                    new GreaterThanOrEqual(1),
+                ]
+            ])
+            ->add('cells', IntegerType::class, [
+                'label' => 'Столбцов',
+                'constraints' => [
+                    new LessThanOrEqual(10),
+                    new GreaterThanOrEqual(1),
+                ]
+            ])
             ->getForm();
 
         $form->handleRequest($request);
@@ -83,17 +98,29 @@ final class GardenController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
+            $cells = $data['cells'];
+            $rows = $data['rows'];
+
+            if ($cells > 10) {
+                throw new Exception('Should be less then 10');
+            }
+            if ($rows > 10) {
+                throw new Exception('Should be less then 10');
+            }
+
+
+
             $garden = new Garden();
             $garden
-                ->setDimensionX($data['cells'])
-                ->setDimensionY($data['rows'])
+                ->setDimensionX($cells)
+                ->setDimensionY($rows)
             ;
 
             $this->entityManager->persist($garden);
             $this->entityManager->flush();
 
-            for ($i=0;$i<$data['cells'];$i++) {
-                for ($j=0;$j<$data['rows'];$j++) {
+            for ($i=0; $i< $cells; $i++) {
+                for ($j=0; $j< $rows; $j++) {
                     $gardenCell = (new GardenCell())
                         ->setPositionX($i)
                         ->setPositionY($j)
