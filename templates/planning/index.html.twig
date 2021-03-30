@@ -58,7 +58,7 @@
                     {% for j in 0..dimensionX-1 %}
                         <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
                             <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content">
-                                <h4>{{ gardenCellList[j][i]['plantName'] }}</h4>
+                                <h1>{{ gardenCellList[j][i]['plantName'] }}</h1>
                                 {% if gardenCellList[j][i]['plannedPlantName'] != '' %}
                                     <h4>(План: {{ gardenCellList[j][i]['plannedPlantName'] }} {{ gardenCellList[j][i]['plannedPlantAt'] }})</h4>
                                 {% endif %}

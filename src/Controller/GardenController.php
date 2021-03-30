@@ -8,6 +8,7 @@ use App\Entity\Garden;
 use App\Entity\GardenCell;
 use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
+use App\Repository\PlanningRepository;
 use App\Repository\PlantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,17 +27,21 @@ final class GardenController extends AbstractController
     private $plantRepository;
     /** @var GardenCellRepository */
     private $gardenCellRepository;
+    /** @var PlanningRepository */
+    private $planningRepository;
 
     public function __construct(
         GardenRepository $gardenRepository,
         GardenCellRepository $gardenCellRepository,
         PlantRepository $plantRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        PlanningRepository $planningRepository
     ) {
         $this->gardenRepository = $gardenRepository;
         $this->plantRepository = $plantRepository;
         $this->entityManager = $entityManager;
         $this->gardenCellRepository = $gardenCellRepository;
+        $this->planningRepository = $planningRepository;
     }
 
     public function index(Request $request): Response
@@ -129,6 +134,13 @@ final class GardenController extends AbstractController
     {
         foreach ($this->gardenRepository->findAll() as $garden) {
             foreach ($garden->getCellList() as $gardenCell) {
+                $planningList = $this->planningRepository->findBy(['cell' => $gardenCell->getId()]);
+
+                foreach ($planningList as $planning) {
+                    $this->entityManager->remove($planning);
+                }
+
+
                 $this->entityManager->remove($gardenCell);
             }
 
