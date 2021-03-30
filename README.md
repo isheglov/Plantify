@@ -3,6 +3,9 @@ Smart garden planting planner
 Deploy:
 `git push heroku master`
 
-Migrations
+Migrations:
 `heroku run bash`
 `symfony console doctrine:migrations:migrate`
+
+Logs:
+`heroku logs`
