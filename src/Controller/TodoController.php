@@ -28,7 +28,7 @@ final class TodoController extends AbstractController
             $todoList[] = [
                 'id' => $planning->getId(),
                 'name' => $planning->getPlant()->getName(),
-                'date' => $planning->getPlantAt()->format('Y-m-d'),
+                'date' => $planning->getPlantAt()->format('Y-m'),
             ];
         }
 
