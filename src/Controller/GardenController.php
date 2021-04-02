@@ -154,6 +154,20 @@ final class GardenController extends AbstractController
         $this->entityManager->persist($gardenCell);
         $this->entityManager->flush();
 
+
+        // history
+
+        $planning = (new Planning())
+            ->setCell($this->gardenCellRepository->find($plantCellMap['cellId']))
+            ->setPlant($plant)
+            // plantedFrom
+            // plantedTo
+            // comment
+            ->setComment('usual planting')
+            ->setCreatedAt(new DateTime())
+            ->setUpdatedAt(new DateTime())
+        ;
+
         return new JsonResponse(['ok']);
     }
 
