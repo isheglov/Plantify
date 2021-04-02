@@ -30,6 +30,8 @@ h2#t {
     text-align: center;
 }
 
+/* navigation */
+/* desktop */
 .nav-bar {
     display: flex;
     align-items: center;

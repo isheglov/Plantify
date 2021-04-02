@@ -1,0 +1,23 @@
+
+
+/* mobile */
+.nav-bar div {
+    width: 100%;
+}
+
+.nav-bar-item {
+    margin-top: 15px;
+    margin-right: 15px;
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background: #1ea471;
+    color: #fff;
+    font-size: 60px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

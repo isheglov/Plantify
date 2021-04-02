@@ -1,0 +1,4 @@
+history_index:
+    path: /history
+    controller: App\Controller\HistoryController::index
+    methods: GET

@@ -18,20 +18,21 @@
     <div>
         <a class="nav-bar-item" href="/planning">Планировать новые посадки</a>
     </div>
-    <div>
-        <a class="nav-bar-item" href="/history">Смотреть историю</a>
-    </div>
 </div>
 
 <h1 class="title">План посадок</h1>
 
-{% for todo in todoList %}
+{% for historyItem in historyList %}
+
+{#    draw table here#}
+
     <div class="modal-item">
-        <input type="checkbox" id="checked_{{ todo.id }}" name="plant_chb" value="screen" class="checkbox">
-        <label for="checked_{{ todo.id }}" ><b>{{ todo.date }}</b> {{ todo.name }} </label>
+{#        <input type="checkbox" id="checked_{{ historyItem.id }}" name="plant_chb" value="screen" class="checkbox">#}
+        {{ historyItem.name }}<b>С: {{ historyItem.dateFrom }}</b> <b>По: {{ historyItem.dateFrom }}</b>
         <a href="/planning">На схеме</a>
-        <button>Сделано</button>
-        <button>Удалить</button>
+        На грядке № {{ historyItem.cell }}
+{#        <button>Сделано</button>#}
+{#        <button>Удалить</button>#}
     </div>
 {% endfor %}
 

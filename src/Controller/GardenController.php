@@ -6,10 +6,12 @@ namespace App\Controller;
 
 use App\Entity\Garden;
 use App\Entity\GardenCell;
+use App\Entity\History;
 use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
 use App\Repository\PlanningRepository;
 use App\Repository\PlantRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -108,8 +110,6 @@ final class GardenController extends AbstractController
                 throw new Exception('Should be less then 10');
             }
 
-
-
             $garden = new Garden();
             $garden
                 ->setDimensionX($cells)
@@ -149,24 +149,27 @@ final class GardenController extends AbstractController
     {
         $gardenCell = $this->gardenCellRepository->find($cellId);
 
-        $gardenCell->setPlant($this->plantRepository->find($plantId));
+        $plant = $this->plantRepository->find($plantId);
+
+        $gardenCell->setPlant($plant);
 
         $this->entityManager->persist($gardenCell);
         $this->entityManager->flush();
 
-
         // history
 
-        $planning = (new Planning())
-            ->setCell($this->gardenCellRepository->find($plantCellMap['cellId']))
+        // set previous to removed OR separate endpoint?
+
+        $history = (new History())
+            ->setCell($gardenCell)
             ->setPlant($plant)
-            // plantedFrom
-            // plantedTo
-            // comment
-            ->setComment('usual planting')
+            ->setPlantedFrom(new DateTime())
             ->setCreatedAt(new DateTime())
             ->setUpdatedAt(new DateTime())
         ;
+
+        $this->entityManager->persist($history);
+        $this->entityManager->flush();
 
         return new JsonResponse(['ok']);
     }

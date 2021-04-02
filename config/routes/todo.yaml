@@ -2,3 +2,4 @@ todo_index:
     path: /todo
     controller: App\Controller\TodoController::index
     methods: GET
+

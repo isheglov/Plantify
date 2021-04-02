@@ -36,6 +36,7 @@
         </form>
     </div>
 
+{#    desktop nav#}
     <div class="nav-bar">
         <div>
             <button class='nav-bar-item' id="suggestion">Что дальше сажать</button>
@@ -45,6 +46,9 @@
         </div>
         <div>
             <a class="nav-bar-item" href="/todo">To-do лист</a>
+        </div>
+        <div>
+            <a class="nav-bar-item" href="/history">Смотреть историю</a>
         </div>
     </div>
 
@@ -69,6 +73,17 @@
             {% endfor %}
         </table>
     </div>
+
+{#mobile nav#}
+{#    <div class="nav-bar">#}
+{#        <div>#}
+{#            <button class='nav-bar-item' id="suggestion">Что дальше сажать</button>#}
+
+{#            <a class='nav-bar-item' href="/">На главную</a>#}
+
+{#            <a class="nav-bar-item" href="/todo">To-do лист</a>#}
+{#        </div>#}
+{#    </div>#}
 
     <script>
         jQuery( function() {
