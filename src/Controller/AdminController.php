@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
-final class AdminController
+final class AdminController extends AbstractController
 {
     public function index(): Response
     {
@@ -20,23 +21,8 @@ final class AdminController
         );
     }
 
-    public function addPlants(): Response
+    public function test(): Response
     {
-        return new Response(
-            '<html><body>
-                        Добавить растениe
-                        <div><a href="/admin">adminPanel</a></div>
-                    </body></html>'
-        );
-    }
-
-    public function getListPlants(): Response
-    {
-        return new Response(
-            '<html><body>
-                        Список растений
-                        <div><a href="/admin">adminPanel</a></div>
-                    </body></html>'
-        );
+        return $this->render('test.html.twig');
     }
 }
