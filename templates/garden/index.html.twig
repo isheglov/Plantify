@@ -84,7 +84,9 @@
         var dialog, form, combined;
 
         function setPlant() {
-            $(jQuery( "#"+clickedId )[0]).find('div')[0].innerText = $( "#plant option:selected" ).text();
+            let newPlant = $( "#plant option:selected" ).text();
+
+            $($ (jQuery( "#"+clickedId )[0]).find('div')[0]).find('h1')[0].innerText = newPlant;
 
             let cellId = clickedId.replace('cell','');
             let plantId = $( "#plant option:selected" ).val();
