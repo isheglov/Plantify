@@ -30,8 +30,8 @@ final class HistoryController extends AbstractController
                 'id' => $historyItem->getId(),
                 'cell' => $historyItem->getCell()->getId(),
                 'name' => $historyItem->getPlant()->getName(),
-                'dateFrom' => $historyItem->getPlantedFrom()->format('Y-m'),
-                'dateTo' => $historyItem->getPlantedTo()->format('Y-m'),
+                'dateFrom' => $historyItem->getPlantedFrom() ? $historyItem->getPlantedFrom()->format('Y-m') : '',
+                'dateTo' => $historyItem->getPlantedTo() ? $historyItem->getPlantedTo()->format('Y-m') : '',
             ];
         }
 

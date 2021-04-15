@@ -9,6 +9,7 @@ use App\Entity\GardenCell;
 use App\Entity\History;
 use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
+use App\Repository\HistoryRepository;
 use App\Repository\PlanningRepository;
 use App\Repository\PlantRepository;
 use DateTime;
@@ -34,19 +35,23 @@ final class GardenController extends AbstractController
     private $gardenCellRepository;
     /** @var PlanningRepository */
     private $planningRepository;
+    /** @var HistoryRepository */
+    private $historyRepository;
 
     public function __construct(
         GardenRepository $gardenRepository,
         GardenCellRepository $gardenCellRepository,
         PlantRepository $plantRepository,
         EntityManagerInterface $entityManager,
-        PlanningRepository $planningRepository
+        PlanningRepository $planningRepository,
+        HistoryRepository $historyRepository
     ) {
         $this->gardenRepository = $gardenRepository;
         $this->plantRepository = $plantRepository;
         $this->entityManager = $entityManager;
         $this->gardenCellRepository = $gardenCellRepository;
         $this->planningRepository = $planningRepository;
+        $this->historyRepository = $historyRepository;
     }
 
     public function index(Request $request): Response
@@ -184,6 +189,11 @@ final class GardenController extends AbstractController
                     $this->entityManager->remove($planning);
                 }
 
+                $historyList = $this->historyRepository->findBy(['cell' => $gardenCell->getId()]);
+
+                foreach ($historyList as $historyItem) {
+                    $this->entityManager->remove($historyItem);
+                }
 
                 $this->entityManager->remove($gardenCell);
             }
