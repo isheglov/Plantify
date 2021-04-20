@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Repository\GardenRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Security;
 
-final class UserController
+final class UserController extends AbstractController
 {
     /** @var GardenRepository */
     private $gardenRepository;
@@ -48,6 +49,8 @@ final class UserController
                     </html>'
             );
         }
+
+        return $this->redirectToRoute('garden_index');
 
         return new Response(
             '<html>

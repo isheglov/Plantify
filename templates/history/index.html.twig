@@ -11,13 +11,9 @@
 </head>
 <body>
 
+{#menu buttons#}
 <div class="nav-bar">
-    <div>
-        <a class='nav-bar-item' href="/">На главную</a>
-    </div>
-    <div>
-        <a class="nav-bar-item" href="/planning">Планировать новые посадки</a>
-    </div>
+    {% include 'common/menu.html.twig' %}
 </div>
 
 <h1 class="title">История посадок</h1>

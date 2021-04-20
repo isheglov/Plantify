@@ -36,28 +36,13 @@
     </form>
 </div>
 
-
+{#menu buttons#}
 <div class="nav-bar">
-    <div>
-        <form action="/garden/delete" method="post">
-            <button  class='nav-bar-item' id="delete" onclick="return confirm('Удалить участок?')">Удалить</button>
-        </form>
-    </div>
+    {% include 'common/menu.html.twig' %}
     <div>
         <button class='nav-bar-item' id="combined">Комбинированные посадки</button>
     </div>
-    <div>
-        <a class='nav-bar-item' href="/">На главную</a>
-    </div>
-    <div>
-        <a class="nav-bar-item" href="/todo">To-do лист</a>
-    </div>
-    <div>
-        <a class="nav-bar-item" href="{{ path('app_logout') }}">Выйти</a>
-    </div>
 </div>
-
-
 
 <div>
 <h2 id="t">Схема участка</h2>
