@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 
@@ -37,6 +38,8 @@ final class GardenController extends AbstractController
     private $planningRepository;
     /** @var HistoryRepository */
     private $historyRepository;
+    /** @var Security */
+    private $security;
 
     public function __construct(
         GardenRepository $gardenRepository,
@@ -44,7 +47,8 @@ final class GardenController extends AbstractController
         PlantRepository $plantRepository,
         EntityManagerInterface $entityManager,
         PlanningRepository $planningRepository,
-        HistoryRepository $historyRepository
+        HistoryRepository $historyRepository,
+        Security $security
     ) {
         $this->gardenRepository = $gardenRepository;
         $this->plantRepository = $plantRepository;
@@ -52,17 +56,17 @@ final class GardenController extends AbstractController
         $this->gardenCellRepository = $gardenCellRepository;
         $this->planningRepository = $planningRepository;
         $this->historyRepository = $historyRepository;
+        $this->security = $security;
     }
 
     public function index(Request $request): Response
     {
-        $gardenList = $this->gardenRepository->findAll();
+        $user = $this->security->getUser();
+        $garden = $this->gardenRepository->findOneBy(['owner' => $user]);
 
-        if(empty($gardenList)) {
+        if(empty($garden)) {
             return $this->redirectToRoute('user_index');
         }
-
-        $garden = end($gardenList);
 
         $gardenCellList = [];
         foreach ($garden->getCellList() as $gardenCell) {
@@ -103,6 +107,7 @@ final class GardenController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->security->getUser();
             $data = $form->getData();
 
             $cells = $data['cells'];
@@ -119,6 +124,7 @@ final class GardenController extends AbstractController
             $garden
                 ->setDimensionX($cells)
                 ->setDimensionY($rows)
+                ->setOwner($user)
             ;
 
             $this->entityManager->persist($garden);
@@ -181,26 +187,26 @@ final class GardenController extends AbstractController
 
     public function delete(Request $request): Response
     {
-        foreach ($this->gardenRepository->findAll() as $garden) {
-            foreach ($garden->getCellList() as $gardenCell) {
-                $planningList = $this->planningRepository->findBy(['cell' => $gardenCell->getId()]);
+        $user = $this->security->getUser();
+        $garden = $this->gardenRepository->findOneBy(['owner' => $user]);
 
-                foreach ($planningList as $planning) {
-                    $this->entityManager->remove($planning);
-                }
+        foreach ($garden->getCellList() as $gardenCell) {
+            $planningList = $this->planningRepository->findBy(['cell' => $gardenCell->getId()]);
 
-                $historyList = $this->historyRepository->findBy(['cell' => $gardenCell->getId()]);
-
-                foreach ($historyList as $historyItem) {
-                    $this->entityManager->remove($historyItem);
-                }
-
-                $this->entityManager->remove($gardenCell);
+            foreach ($planningList as $planning) {
+                $this->entityManager->remove($planning);
             }
 
-            $this->entityManager->remove($garden);
+            $historyList = $this->historyRepository->findBy(['cell' => $gardenCell->getId()]);
+
+            foreach ($historyList as $historyItem) {
+                $this->entityManager->remove($historyItem);
+            }
+
+            $this->entityManager->remove($gardenCell);
         }
 
+        $this->entityManager->remove($garden);
         $this->entityManager->flush();
 
         return $this->redirectToRoute('user_index');

@@ -6,23 +6,30 @@ namespace App\Controller;
 
 use App\Repository\GardenRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Security;
 
 final class UserController
 {
     /** @var GardenRepository */
     private $gardenRepository;
 
+    /** @var Security */
+    private $security;
+
     public function __construct(
-        GardenRepository $gardenRepository
+        GardenRepository $gardenRepository,
+        Security $security
     ) {
         $this->gardenRepository = $gardenRepository;
+        $this->security = $security;
     }
 
     public function index(): Response
     {
-        $gardenList = $this->gardenRepository->findAll();
+        $user = $this->security->getUser();
+        $garden = $this->gardenRepository->findOneBy(['owner' => $user]);
 
-        if(empty($gardenList)) {
+        if($garden === null) {
             return new Response(
                 '<html>
                             <title>Plantify</title>

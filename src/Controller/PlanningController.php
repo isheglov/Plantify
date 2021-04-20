@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Security;
 
 final class PlanningController extends AbstractController
 {
@@ -30,19 +31,23 @@ final class PlanningController extends AbstractController
     private $gardenCellRepository;
     /** @var PlanningRepository */
     private $planningRepository;
+    /** @var Security */
+    private $security;
 
     public function __construct(
         GardenRepository $gardenRepository,
         GardenCellRepository $gardenCellRepository,
         PlantRepository $plantRepository,
         EntityManagerInterface $entityManager,
-        PlanningRepository $planningRepository
+        PlanningRepository $planningRepository,
+        Security $security
     ) {
         $this->gardenRepository = $gardenRepository;
         $this->plantRepository = $plantRepository;
         $this->entityManager = $entityManager;
         $this->gardenCellRepository = $gardenCellRepository;
         $this->planningRepository = $planningRepository;
+        $this->security = $security;
     }
 
     public function index(Request $request): Response
@@ -94,7 +99,6 @@ final class PlanningController extends AbstractController
         /** @var Garden $garden */
         $garden = $this->getGarden();
 
-        $gardenCellList = [];
         $planning = [];
         foreach ($garden->getCellList() as $gardenCell) {
             if (null === $gardenCell->getPlant()) {
@@ -167,9 +171,9 @@ final class PlanningController extends AbstractController
      */
     private function getGarden(): ?Garden
     {
-        $gardenList = $this->gardenRepository->findAll();
+        $user = $this->security->getUser();
 
-        return end($gardenList);
+        return $this->gardenRepository->findOneBy(['owner' => $user]);
     }
 
     /**
