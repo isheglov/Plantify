@@ -23,7 +23,9 @@
         <input type="checkbox" id="checked_{{ todo.id }}" name="plant_chb" value="screen" class="checkbox">
         <label for="checked_{{ todo.id }}" ><b>{{ todo.date }}</b> {{ todo.name }} </label>
 
-        <a href="/planning">На схеме</a>
+        На грядке № {{ todo.cell }}
+
+        <a href="/planning/{{ todo.cell }}">На схеме</a>
 
         <button id="done" data-planning-id="{{ todo.id }}">Сделано</button>
         <button id="remove" data-planning-id="{{ todo.id }}">Удалить</button>

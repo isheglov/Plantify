@@ -51,6 +51,7 @@ final class TodoController extends AbstractController
         foreach ($this->getPlannedList() as $planning) {
             $todoList[] = [
                 'id' => $planning->getId(),
+                'cell' => $planning->getCell()->getId(),
                 'name' => $planning->getPlant()->getName(),
                 'date' => $planning->getPlantAt()->format('Y F'),
             ];

@@ -3,6 +3,11 @@ planning_index:
     controller: App\Controller\PlanningController::index
     methods: GET
 
+planning_index_with_id:
+    path: /planning/{cell}
+    controller: App\Controller\PlanningController::index
+    methods: GET
+
 planning_create:
     path: /planning
     controller: App\Controller\PlanningController::create

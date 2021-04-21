@@ -51,7 +51,7 @@ final class PlanningController extends AbstractController
         $this->security = $security;
     }
 
-    public function index(Request $request): Response
+    public function index(Request $request, ?int $cell): Response
     {
         $garden = $this->getGarden();
 
@@ -63,7 +63,12 @@ final class PlanningController extends AbstractController
         foreach ($garden->getCellList() as $gardenCell) {
 
             /** @var Planning $plan */
-            $planningList = $this->planningRepository->findBy(['cell' => $gardenCell->getId()]);
+            $planningList = $this->planningRepository->findBy(
+                [
+                    'cell' => $gardenCell->getId(),
+                    'status' => PlanningStatusEnumeration::PLANNED
+                ]
+            );
             $plan = empty($planningList) ? '' : end($planningList);
 
             $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
@@ -81,6 +86,7 @@ final class PlanningController extends AbstractController
             'dimensionY' => $garden->getDimensionY(),
             'gardenCellList' => $gardenCellList,
             'plantList' => $this->plantRepository->findAll(),
+            'cell' => $cell,
         ]);
     }
 

@@ -33,15 +33,13 @@ final class HistoryController extends AbstractController
     {
         $historyList = [];
 
-        // add filter by month ?
-
         foreach ($this->getHistoryEntityList() as $historyItem) {
             $historyList[] = [
                 'id' => $historyItem->getId(),
                 'cell' => $historyItem->getCell()->getId(),
                 'name' => $historyItem->getPlant()->getName(),
-                'dateFrom' => $historyItem->getPlantedFrom() ? $historyItem->getPlantedFrom()->format('Y-m') : '',
-                'dateTo' => $historyItem->getPlantedTo() ? $historyItem->getPlantedTo()->format('Y-m') : '',
+                'dateFrom' => $historyItem->getPlantedFrom() ? $historyItem->getPlantedFrom()->format('Y F') : '',
+                'dateTo' => $historyItem->getPlantedTo() ? $historyItem->getPlantedTo()->format('Y F') : '',
             ];
         }
 
@@ -58,14 +56,11 @@ final class HistoryController extends AbstractController
         $user = $this->security->getUser();
         $garden = $this->gardenRepository->findOneBy(['owner' => $user]);
 
-        $historyList = [];
+        $gardenCellList = [];
         foreach ($garden->getCellList() as $gardenCell) {
-            $historyList = array_merge(
-                $historyList,
-                $this->historyRepository->findBy(['cell' => $gardenCell->getId()])
-            );
+            $gardenCellList[] = $gardenCell->getId();
         }
 
-        return $historyList;
+        return $this->historyRepository->findBy(['cell' => $gardenCellList]);
     }
 }

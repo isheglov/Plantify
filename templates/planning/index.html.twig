@@ -54,7 +54,7 @@
                 <tr>
                     {% for j in 0..dimensionX-1 %}
                         <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
-                            <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content">
+                            <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content"  {% if gardenCellList[j][i]['cellId'] == cell %} style="border: 4px solid red;"{% endif %}>
                                 <h1>{{ gardenCellList[j][i]['plantName'] }}</h1>
                                 {% if gardenCellList[j][i]['plannedPlantName'] != '' %}
                                     <h4>(План: {{ gardenCellList[j][i]['plannedPlantName'] }} {{ gardenCellList[j][i]['plannedPlantAt'] }})</h4>
@@ -104,9 +104,9 @@
                         planMap.map.forEach(function (item) {
                             let cell = $('.cell-content'+item.cellId);
                             cell.append(
-                                '<div class="suggestion-item">' +
-                                '<input value="'+item.plantId+'" name="suggestion-radio-'+item.cellId+'" type="radio" id="suggestion-radio-'+item.cellId+'-'+i+'"/>' +
-                                '<label for="suggestion-radio-'+item.cellId+'-'+i+'" style="color:green">'+item.plantName+'</label>' +
+                                '<div class="suggestion-item suggestion-div-'+item.cellId+'">' +
+                                '<input value="'+item.plantId+'" name="suggestion-radio-'+item.cellId+'" type="radio" id="suggestion-radio-'+item.cellId+'-'+item.plantId+'"/>' +
+                                '<label for="suggestion-radio-'+item.cellId+'-'+item.plantId+'" style="color:green">'+item.plantName+'</label>' +
                                 '</div>'
                             );
                             i++;
@@ -120,7 +120,7 @@
                         console.log(cellList);
                         cellList.forEach(function (item, index) {
                             let cell = $('.cell-content'+index);
-                            cell.append('<button class="save-btn" id="save-btn-'+index+'">сохранить</button>');
+                            cell.append('<button class="save-btn" id="save-btn-'+index+'" data-cell-id="'+index+'">сохранить</button>');
                         });
 
                         $( ".save-btn" ).on( "click", saveSuggestion);
@@ -142,13 +142,14 @@
                     type: 'POST',
                     data: jsonText,
                     success: function(response) {
-                        console.log('success')
-
                         console.log(response)
 
-                        // hack
-                        location.reload();
+                        let plantName = $('[for="suggestion-radio-'+cellId+'-'+plantId+'"]').text();
 
+                        $(".cell-content"+cellId).append('<h4>(План: '+plantName+')</h4>');
+
+                        $(".suggestion-div-"+cellId).hide();
+                        $("#save-btn-"+cellId).hide();
                     }
                 });
             }
