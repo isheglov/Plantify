@@ -107,10 +107,13 @@ final class TodoController extends AbstractController
         }
 
         $plannedList = $this->planningRepository->findBy(
-                [
-                    'cell' => $gardenCellList,
-                    'status' => PlanningStatusEnumeration::PLANNED,
-                ]
+            [
+                'cell' => $gardenCellList,
+                'status' => PlanningStatusEnumeration::PLANNED,
+            ],
+            [
+                'plantAt' => 'ASC',
+            ]
         );
 
         return $plannedList;
