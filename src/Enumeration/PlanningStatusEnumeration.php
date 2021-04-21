@@ -8,4 +8,5 @@ final class PlanningStatusEnumeration
 {
     public const PLANNED = 'planned';
     public const DONE = 'done';
+    public const DELETED = 'deleted';
 }

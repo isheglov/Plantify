@@ -1,3 +1,7 @@
 ###
-PUT https://127.0.0.1:8000/todo/13/mark-done
+PUT https://127.0.0.1:8000/todo/18/mark-done
+Content-Type: application/json
+
+###
+DELETE https://127.0.0.1:8000/todo/16
 Content-Type: application/json

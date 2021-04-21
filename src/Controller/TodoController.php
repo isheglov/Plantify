@@ -52,7 +52,7 @@ final class TodoController extends AbstractController
             $todoList[] = [
                 'id' => $planning->getId(),
                 'name' => $planning->getPlant()->getName(),
-                'date' => $planning->getPlantAt()->format('Y-m'),
+                'date' => $planning->getPlantAt()->format('Y F'),
             ];
         }
 
@@ -80,6 +80,18 @@ final class TodoController extends AbstractController
         return new JsonResponse([$response]);
     }
 
+    public function delete(int $planningId)
+    {
+        $planning = $this->planningRepository->find($planningId);
+
+        $planning->setStatus(PlanningStatusEnumeration::DELETED);
+
+        $this->entityManager->persist($planning);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['ok']);
+    }
+
     /**
      * @return Planning[]
      */
@@ -88,18 +100,17 @@ final class TodoController extends AbstractController
         $user = $this->security->getUser();
         $garden = $this->gardenRepository->findOneBy(['owner' => $user]);
 
-        $plannedList = [];
+        $gardenCellList = [];
         foreach ($garden->getCellList() as $gardenCell) {
-            $plannedList = array_merge(
-                $plannedList,
-                $this->planningRepository->findBy(
-                    [
-                        'cell' => $gardenCell->getId(),
-                        'status' => PlanningStatusEnumeration::PLANNED,
-                    ]
-                )
-            );
+            $gardenCellList[] = $gardenCell->getId();
         }
+
+        $plannedList = $this->planningRepository->findBy(
+                [
+                    'cell' => $gardenCellList,
+                    'status' => PlanningStatusEnumeration::PLANNED,
+                ]
+        );
 
         return $plannedList;
     }

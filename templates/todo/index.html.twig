@@ -19,14 +19,44 @@
 <h1 class="title">План посадок</h1>
 
 {% for todo in todoList %}
-    <div class="modal-item">
+    <div class="modal-item" id="todo_{{ todo.id }}">
         <input type="checkbox" id="checked_{{ todo.id }}" name="plant_chb" value="screen" class="checkbox">
         <label for="checked_{{ todo.id }}" ><b>{{ todo.date }}</b> {{ todo.name }} </label>
+
         <a href="/planning">На схеме</a>
-        <button>Сделано</button>
-        <button>Удалить</button>
+
+        <button id="done" data-planning-id="{{ todo.id }}">Сделано</button>
+        <button id="remove" data-planning-id="{{ todo.id }}">Удалить</button>
     </div>
 {% endfor %}
 
+<script>
+    jQuery( function() {
+        $( "[id=done]" ).on( "click", function() {
+            let planningId = $(this).data('planning-id');
+
+            $.ajax({
+                url: '/todo/'+planningId+'/mark-done',
+                type: 'PUT',
+                success: function(result) {
+                    console.log(result);
+                    $('#todo_'+planningId).hide();
+                }
+            });
+        });
+        $( "[id=remove]" ).on( "click", function() {
+            let planningId = $(this).data('planning-id');
+
+            $.ajax({
+                url: '/todo/'+planningId,
+                type: 'DELETE',
+                success: function(result) {
+                    console.log(result);
+                    $('#todo_'+planningId).hide();
+                }
+            });
+        });
+    } );
+</script>
 </body>
 </html>
