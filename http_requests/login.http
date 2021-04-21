@@ -1,0 +1,4 @@
+POST https://127.0.0.1:8000/login
+Content-Type: application/x-www-form-urlencoded
+
+email=123@test.com&password=123456&_csrf_token=l1jSrBHW6mc9yR9JwDMQA_YPchcPyy845J3_vFX290Q

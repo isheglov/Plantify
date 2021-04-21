@@ -3,3 +3,7 @@ todo_index:
     controller: App\Controller\TodoController::index
     methods: GET
 
+todo_mark_as_done:
+    path: /todo/{planningId}/mark-done
+    controller: App\Controller\TodoController::markAsDone
+    methods: PUT

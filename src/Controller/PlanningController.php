@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Garden;
 use App\Entity\Planning;
 use App\Entity\Planting;
+use App\Enumeration\PlanningStatusEnumeration;
 use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
 use App\Repository\PlanningRepository;
@@ -154,7 +155,7 @@ final class PlanningController extends AbstractController
             ->setCell($this->gardenCellRepository->find($plantCellMap['cellId']))
             ->setPlant($plant)
             ->setPlantAt($plantAt)
-            ->setStatus('planned')
+            ->setStatus(PlanningStatusEnumeration::PLANNED)
             ->setComment('usual planting')
             ->setCreatedAt(new DateTime())
             ->setUpdatedAt(new DateTime())

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Domain\GardenCell\AssignPlant\Service;
 use App\Entity\Planning;
+use App\Enumeration\PlanningStatusEnumeration;
 use App\Repository\GardenRepository;
 use App\Repository\PlanningRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Security;
 
 final class TodoController extends AbstractController
@@ -18,6 +22,10 @@ final class TodoController extends AbstractController
     private $gardenRepository;
     /** @var Security */
     private $security;
+    /** @var Service */
+    private $assignPlantToGardenCellService;
+    /** @var EntityManagerInterface */
+    private $entityManager;
 
     /**
      * @param PlanningRepository $planningRepository
@@ -25,11 +33,15 @@ final class TodoController extends AbstractController
     public function __construct(
         PlanningRepository $planningRepository,
         GardenRepository $gardenRepository,
-        Security $security)
-    {
+        Security $security,
+        Service $assignPlantToGardenCellService,
+        EntityManagerInterface $entityManager
+    ) {
         $this->planningRepository = $planningRepository;
         $this->gardenRepository = $gardenRepository;
         $this->security = $security;
+        $this->assignPlantToGardenCellService = $assignPlantToGardenCellService;
+        $this->entityManager = $entityManager;
     }
 
     public function index()
@@ -49,6 +61,25 @@ final class TodoController extends AbstractController
         ]);
     }
 
+    public function markAsDone(int $planningId)
+    {
+        $planning = $this->planningRepository->find($planningId);
+
+        // assign to the cell
+        $response = $this->assignPlantToGardenCellService->execute(
+            $planning->getCell()->getId(),
+            $planning->getPlant()->getId()
+        );
+
+        // change status to done
+        $planning->setStatus(PlanningStatusEnumeration::DONE);
+
+        $this->entityManager->persist($planning);
+        $this->entityManager->flush();
+
+        return new JsonResponse([$response]);
+    }
+
     /**
      * @return Planning[]
      */
@@ -64,7 +95,7 @@ final class TodoController extends AbstractController
                 $this->planningRepository->findBy(
                     [
                         'cell' => $gardenCell->getId(),
-                        'status' => 'planned',
+                        'status' => PlanningStatusEnumeration::PLANNED,
                     ]
                 )
             );

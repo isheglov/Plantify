@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Domain\GardenCell\AssignPlant\Service;
 use App\Entity\Garden;
 use App\Entity\GardenCell;
-use App\Entity\History;
-use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
 use App\Repository\HistoryRepository;
 use App\Repository\PlanningRepository;
 use App\Repository\PlantRepository;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,31 +30,31 @@ final class GardenController extends AbstractController
     private $entityManager;
     /** @var PlantRepository */
     private $plantRepository;
-    /** @var GardenCellRepository */
-    private $gardenCellRepository;
     /** @var PlanningRepository */
     private $planningRepository;
     /** @var HistoryRepository */
     private $historyRepository;
     /** @var Security */
     private $security;
+    /** @var Service */
+    private $assignPlantToGardenCellService;
 
     public function __construct(
         GardenRepository $gardenRepository,
-        GardenCellRepository $gardenCellRepository,
         PlantRepository $plantRepository,
         EntityManagerInterface $entityManager,
         PlanningRepository $planningRepository,
         HistoryRepository $historyRepository,
-        Security $security
+        Security $security,
+        Service $assignPlantToGardenCellService
     ) {
         $this->gardenRepository = $gardenRepository;
         $this->plantRepository = $plantRepository;
         $this->entityManager = $entityManager;
-        $this->gardenCellRepository = $gardenCellRepository;
         $this->planningRepository = $planningRepository;
         $this->historyRepository = $historyRepository;
         $this->security = $security;
+        $this->assignPlantToGardenCellService = $assignPlantToGardenCellService;
     }
 
     public function index(Request $request): Response
@@ -158,31 +156,9 @@ final class GardenController extends AbstractController
 
     public function assignPlantToCell(Request $request, int $cellId, int $plantId): Response
     {
-        $gardenCell = $this->gardenCellRepository->find($cellId);
+        $response = $this->assignPlantToGardenCellService->execute($cellId, $plantId);
 
-        $plant = $this->plantRepository->find($plantId);
-
-        $gardenCell->setPlant($plant);
-
-        $this->entityManager->persist($gardenCell);
-        $this->entityManager->flush();
-
-        // history
-
-        // set previous to removed OR separate endpoint?
-
-        $history = (new History())
-            ->setCell($gardenCell)
-            ->setPlant($plant)
-            ->setPlantedFrom(new DateTime())
-            ->setCreatedAt(new DateTime())
-            ->setUpdatedAt(new DateTime())
-        ;
-
-        $this->entityManager->persist($history);
-        $this->entityManager->flush();
-
-        return new JsonResponse(['ok']);
+        return new JsonResponse([$response]);
     }
 
     public function delete(Request $request): Response
