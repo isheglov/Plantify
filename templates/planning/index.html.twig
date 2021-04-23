@@ -83,6 +83,11 @@
             var clickedId;
             var dialog, form;
 
+            const priorityColorMap = {
+                "4":'green',
+                "10":'gray'
+            };
+
             function setPlant() {
                 let jsonText = '{ "plantList" : [';
                 jQuery( "[name^=plant_chb]:checked ").each(function addCombinedSuggestion (index) {
@@ -103,10 +108,13 @@
                         var i = 0;
                         planMap.map.forEach(function (item) {
                             let cell = $('.cell-content'+item.cellId);
+
+                            let suggestionColor = priorityColorMap[item.priority];
+
                             cell.append(
                                 '<div class="suggestion-item suggestion-div-'+item.cellId+'">' +
                                 '<input value="'+item.plantId+'" name="suggestion-radio-'+item.cellId+'" type="radio" id="suggestion-radio-'+item.cellId+'-'+item.plantId+'"/>' +
-                                '<label for="suggestion-radio-'+item.cellId+'-'+item.plantId+'" style="color:green">'+item.plantName+'</label>' +
+                                '<label for="suggestion-radio-'+item.cellId+'-'+item.plantId+'" style="color:'+suggestionColor+'">'+item.plantName+'</label>' +
                                 '</div>'
                             );
                             i++;

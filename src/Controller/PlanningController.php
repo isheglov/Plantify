@@ -98,10 +98,12 @@ final class PlanningController extends AbstractController
 
         $nextYearPlantList = [];
 
-        foreach ($plantAmountMap['plantList'] as $plantAmount) {
-            $nextYearPlantList[] = $plantAmount['plantId'];
-//            echo $plantAmount['plantAmount'];
+        foreach ($plantAmountMap['plantList'] as $plantParams) {
+            $nextYearPlantList[] = $plantParams['plantId'];
+//            echo $plantParams['plantAmount'];
         }
+
+        $notUsedNextYearPlantList = array_flip($nextYearPlantList);
 
         /** @var Garden $garden */
         $garden = $this->getGarden();
@@ -109,6 +111,17 @@ final class PlanningController extends AbstractController
         $planning = [];
         foreach ($garden->getCellList() as $gardenCell) {
             if (null === $gardenCell->getPlant()) {
+                foreach ($nextYearPlantList as $plantId) {
+                    $plant = $this->plantRepository->find($plantId);
+
+                    $planning[] = [
+                        'cellId' => $gardenCell->getId(),
+                        'plantId' => $plant->getId(),
+                        'plantName' => $plant->getName(),
+                        'priority' => 4,
+                    ];
+                }
+
                 continue;
             }
 
@@ -120,10 +133,28 @@ final class PlanningController extends AbstractController
                         'plantName' => $follower->getName(),
                         'priority' => 4,
                     ];
+
+                    unset($notUsedNextYearPlantList[$follower->getId()]);
                 }
             }
         }
 
+        foreach ($garden->getCellList() as $gardenCell) {
+            if (null === $gardenCell->getPlant()) {
+                continue;
+            }
+
+            foreach ($notUsedNextYearPlantList as $plantId => $key) {
+                $plant = $this->plantRepository->find($plantId);
+
+                $planning[] = [
+                    'cellId' => $gardenCell->getId(),
+                    'plantId' => $plant->getId(),
+                    'plantName' => $plant->getName(),
+                    'priority' => 10,
+                ];
+            }
+        }
 
 //        result = '{"map":[{"cellId":172,"plantId":12,"plantName":"Укроп","priority":4}]}';
 
