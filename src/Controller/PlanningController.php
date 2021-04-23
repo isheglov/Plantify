@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Domain\Planting\ObtainDate\Service;
 use App\Entity\Garden;
+use App\Entity\GardenCell;
 use App\Entity\Planning;
+use App\Entity\Plant;
 use App\Entity\Planting;
 use App\Enumeration\PlanningStatusEnumeration;
 use App\Repository\GardenCellRepository;
@@ -14,6 +17,7 @@ use App\Repository\PlanningRepository;
 use App\Repository\PlantRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +38,8 @@ final class PlanningController extends AbstractController
     private $planningRepository;
     /** @var Security */
     private $security;
+    /** @var Service */
+    private $obtainPlantingDateService;
 
     public function __construct(
         GardenRepository $gardenRepository,
@@ -41,7 +47,8 @@ final class PlanningController extends AbstractController
         PlantRepository $plantRepository,
         EntityManagerInterface $entityManager,
         PlanningRepository $planningRepository,
-        Security $security
+        Security $security,
+        Service $obtainPlantingDateService
     ) {
         $this->gardenRepository = $gardenRepository;
         $this->plantRepository = $plantRepository;
@@ -49,6 +56,7 @@ final class PlanningController extends AbstractController
         $this->gardenCellRepository = $gardenCellRepository;
         $this->planningRepository = $planningRepository;
         $this->security = $security;
+        $this->obtainPlantingDateService = $obtainPlantingDateService;
     }
 
     public function index(Request $request, ?int $cell): Response
@@ -112,27 +120,18 @@ final class PlanningController extends AbstractController
         foreach ($garden->getCellList() as $gardenCell) {
             if (null === $gardenCell->getPlant()) {
                 foreach ($nextYearPlantList as $plantId) {
+                    /** @var Plant $plant */
                     $plant = $this->plantRepository->find($plantId);
 
-                    $planning[] = [
-                        'cellId' => $gardenCell->getId(),
-                        'plantId' => $plant->getId(),
-                        'plantName' => $plant->getName(),
-                        'priority' => 4,
-                    ];
+                    $planning = $this->addPlanningItem($gardenCell, $plant, $planning, 4);
                 }
 
                 continue;
             }
 
             foreach ($gardenCell->getPlant()->getFollower() as $follower) {
-                if (in_array($follower->getId(), $nextYearPlantList)) {
-                    $planning[] = [
-                        'cellId' => $gardenCell->getId(),
-                        'plantId' => $follower->getId(),
-                        'plantName' => $follower->getName(),
-                        'priority' => 4,
-                    ];
+                if (in_array($follower->getId(), $nextYearPlantList, true)) {
+                    $planning = $this->addPlanningItem($gardenCell, $follower, $planning, 4);
 
                     unset($notUsedNextYearPlantList[$follower->getId()]);
                 }
@@ -147,16 +146,11 @@ final class PlanningController extends AbstractController
             foreach ($notUsedNextYearPlantList as $plantId => $key) {
                 $plant = $this->plantRepository->find($plantId);
 
-                $planning[] = [
-                    'cellId' => $gardenCell->getId(),
-                    'plantId' => $plant->getId(),
-                    'plantName' => $plant->getName(),
-                    'priority' => 10,
-                ];
+                $planning = $this->addPlanningItem($gardenCell, $plant, $planning, 10);
             }
         }
 
-//        result = '{"map":[{"cellId":172,"plantId":12,"plantName":"Укроп","priority":4}]}';
+//        result = '{"map":[{"cellId":172,"plantId":12,"plantingId":14,"plantName":"Укроп","priority":4}]}';
 
         $map = ['map' => $planning];
 
@@ -164,7 +158,7 @@ final class PlanningController extends AbstractController
     }
 
     /**
-     * { "plantId":1, "cellId":190 }
+     * { "plantId":13, "plantingId":123, "cellId":190 }
      *
      * @param Request $request
      * @return Response
@@ -183,10 +177,9 @@ final class PlanningController extends AbstractController
             return new JsonResponse(['error']);
         }
 
-        /** @var Planting $planting */
-        $planting = $plantingList->first();
+        $planting = $this->findPlantingById($plantingList, $plantCellMap['plantingId']);
 
-        $plantAt = $this->obtainPlantingDate($planting);
+        $plantAt = $this->obtainPlantingDateService->execute($planting);
 
         $planning = (new Planning())
             ->setCell($this->gardenCellRepository->find($plantCellMap['cellId']))
@@ -214,55 +207,37 @@ final class PlanningController extends AbstractController
         return $this->gardenRepository->findOneBy(['owner' => $user]);
     }
 
-    /**
-     * @param Planting $planting
-     * @return DateTime
-     */
-    private function obtainPlantingDate(Planting $planting): DateTime
+    private function addPlanningItem(GardenCell $gardenCell, Plant $plant, array $planning, int $priority): array
     {
-        $monthPlanned = $this->obtainMonth($planting);
-
-        $yearPlanned = $this->obtainPlantingYear($monthPlanned);
-
-        return (new DateTime())->setDate($yearPlanned, $monthPlanned, 1);
-    }
-
-    /**
-     * @param Planting $planting
-     * @return int
-     */
-    private function obtainMonth(Planting $planting): int
-    {
-        $monthMap = [
-            'январь' => 1,
-            'февраль' => 2,
-            'март' => 3,
-            'апрель' => 4,
-            'май' => 5,
-            'июнь' => 6,
-            'июль' => 7,
-            'август' => 8,
-            'сентябрь' => 9,
-            'октябрь' => 10,
-            'ноябрь' => 11,
-            'декабрь' => 12,
-        ];
-
-        return $monthMap[mb_strtolower($planting->getPlantingMonth())];
-    }
-
-    /**
-     * @param int $monthPlanned
-     * @return int
-     */
-    private function obtainPlantingYear(int $monthPlanned): int
-    {
-        $monthCurrent = (int)date("m");
-
-        if ($monthCurrent > $monthPlanned) {
-            return (int)date("Y") + 1;
+        foreach ($plant->getPlantings() as $planting) {
+            $plantAt = $this->obtainPlantingDateService->execute($planting);
+            $planning[] = [
+                'cellId' => $gardenCell->getId(),
+                'plantId' => $plant->getId(),
+                'plantingId' => $planting->getId(),
+                'plantName' => $plant->getName().' '.$plantAt->format('Y-m'),
+                'priority' => $priority,
+            ];
         }
 
-        return (int)date("Y");
+        return $planning;
+    }
+
+    /**
+     * @param $plantingList
+     * @param int $plantingId
+     * @return Planting
+     * @throws Exception
+     */
+    private function findPlantingById(iterable $plantingList, int $plantingId): Planting
+    {
+        /** @var Planting $planting */
+        foreach ($plantingList as $planting) {
+            if ($planting->getId() === $plantingId) {
+                return $planting;
+            }
+        }
+
+        throw new Exception('Planting not found');
     }
 }
