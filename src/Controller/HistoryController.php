@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Garden;
 use App\Entity\History;
 use App\Repository\GardenRepository;
 use App\Repository\HistoryRepository;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Security;
 
@@ -29,7 +31,7 @@ final class HistoryController extends AbstractController
         $this->security = $security;
     }
 
-    public function index()
+    public function index(?int $year, ?int $month)
     {
         $historyList = [];
 
@@ -43,9 +45,16 @@ final class HistoryController extends AbstractController
             ];
         }
 
-        return $this->render('history/index.html.twig', [
-            'historyList' => $historyList
-        ]);
+        $gardenScheme = $this->getGardenSchemeDto();
+
+        $arr = [
+            'historyList' => $historyList,
+            'date' => (new DateTime)->format("Y m")
+        ];
+
+        $response = array_merge($gardenScheme, $arr);
+
+        return $this->render('history/index.html.twig', $response);
     }
 
     /**
@@ -62,5 +71,38 @@ final class HistoryController extends AbstractController
         }
 
         return $this->historyRepository->findBy(['cell' => $gardenCellList]);
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getGardenSchemeDto(): array
+    {
+        $garden = $this->getGarden();
+
+        $gardenCellList = [];
+        foreach ($garden->getCellList() as $gardenCell) {
+            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
+                'plantId' => $gardenCell->getPlant() ? $gardenCell->getPlant()->getId() : '',
+                'plantName' => $gardenCell->getPlant() ? $gardenCell->getPlant()->getName() : 'пусто',
+                'cellId' => $gardenCell->getId(),
+            ];
+        }
+
+        return [
+            'dimensionX' => $garden->getDimensionX(),
+            'dimensionY' => $garden->getDimensionY(),
+            'gardenCellList' => $gardenCellList,
+        ];
+    }
+
+    /**
+     * @return Garden
+     */
+    private function getGarden(): Garden
+    {
+        $user = $this->security->getUser();
+
+        return $this->gardenRepository->findOneBy(['owner' => $user]);
     }
 }

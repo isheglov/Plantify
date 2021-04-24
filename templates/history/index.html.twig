@@ -1,38 +1,45 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <title>Plantify</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="../../css/style.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-</head>
-<body>
+{% include 'header.html.twig' %}
 
-{#menu buttons#}
+{# menu buttons #}
 <div class="nav-bar">
     {% include 'common/menu.html.twig' %}
 </div>
 
 <h1 class="title">История посадок</h1>
 
+<div style="text-align: center;"><a href="/history/2021/3"><< Раньше || </a><span class="title"> {{ date }}</span><a href="/history/2021/4"> || Позже >></a></div>
+
+
+<div>
+    <h2 id="t">Схема участка</h2>
+    <table>
+        {% for i in 0..dimensionY-1 %}
+            <tr>
+                {% for j in 0..dimensionX-1 %}
+                    <td id="cell{{ gardenCellList[j][i]['cellId'] }}">
+                        <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content">
+                            <h1>{{ gardenCellList[j][i]['plantName'] }}</h1>
+                        </div>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+
+
+
+
 {% for historyItem in historyList %}
-
-{#    draw table here#}
-
     <div class="modal-item">
-{#        <input type="checkbox" id="checked_{{ historyItem.id }}" name="plant_chb" value="screen" class="checkbox">#}
         {{ historyItem.name }}<b>С: {{ historyItem.dateFrom }}</b> {% if historyItem.dateTo != '' %}<b>По: {{ historyItem.dateTo }}</b>{% endif %}
 
         <a href="/planning/{{ historyItem.cell }}">На схеме</a>
 
         На грядке № {{ historyItem.cell }}
-{#        <button>Сделано</button>#}
-{#        <button>Удалить</button>#}
     </div>
 {% endfor %}
 
-</body>
-</html>
+{% include 'footer.html.twig' %}

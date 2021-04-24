@@ -61,41 +61,12 @@ final class PlanningController extends AbstractController
 
     public function index(Request $request, ?int $cell): Response
     {
-        $garden = $this->getGarden();
+        $gardenSchemeDto = $this->getGardenSchemeDto();
 
-        if ($garden === null) {
-            return $this->redirectToRoute('user_index');
-        }
+        $gardenSchemeDto['plantList'] = $this->plantRepository->findAll();
+        $gardenSchemeDto['cell'] = $cell;
 
-        $gardenCellList = [];
-        foreach ($garden->getCellList() as $gardenCell) {
-
-            /** @var Planning $plan */
-            $planningList = $this->planningRepository->findBy(
-                [
-                    'cell' => $gardenCell->getId(),
-                    'status' => PlanningStatusEnumeration::PLANNED
-                ]
-            );
-            $plan = empty($planningList) ? '' : end($planningList);
-
-            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
-                'plantId' => $gardenCell->getPlant()?$gardenCell->getPlant()->getId():'',
-                'plantName' => $gardenCell->getPlant()?$gardenCell->getPlant()->getName():'пусто',
-                'cellId' => $gardenCell->getId(),
-//                'plannedPlantId' => 1, //potato
-                'plannedPlantName' => $plan ? $plan->getPlant()->getName() : '',
-                'plannedPlantAt' => $plan ? $plan->getPlantAt()->format('Y-m') : '',
-            ];
-        }
-
-        return $this->render('planning/index.html.twig', [
-            'dimensionX' => $garden->getDimensionX(),
-            'dimensionY' => $garden->getDimensionY(),
-            'gardenCellList' => $gardenCellList,
-            'plantList' => $this->plantRepository->findAll(),
-            'cell' => $cell,
-        ]);
+        return $this->render('planning/index.html.twig', $gardenSchemeDto);
     }
 
     public function create(Request $request): Response
@@ -113,7 +84,6 @@ final class PlanningController extends AbstractController
 
         $notUsedNextYearPlantList = array_flip($nextYearPlantList);
 
-        /** @var Garden $garden */
         $garden = $this->getGarden();
 
         $planning = [];
@@ -200,7 +170,7 @@ final class PlanningController extends AbstractController
     /**
      * @return Garden
      */
-    private function getGarden(): ?Garden
+    private function getGarden(): Garden
     {
         $user = $this->security->getUser();
 
@@ -239,5 +209,40 @@ final class PlanningController extends AbstractController
         }
 
         throw new Exception('Planting not found');
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getGardenSchemeDto(): array
+    {
+        $garden = $this->getGarden();
+
+        $gardenCellList = [];
+        foreach ($garden->getCellList() as $gardenCell) {
+
+            /** @var Planning $plan */
+            $planningList = $this->planningRepository->findBy(
+                [
+                    'cell' => $gardenCell->getId(),
+                    'status' => PlanningStatusEnumeration::PLANNED
+                ]
+            );
+            $plan = empty($planningList) ? '' : end($planningList);
+
+            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
+                'plantId' => $gardenCell->getPlant() ? $gardenCell->getPlant()->getId() : '',
+                'plantName' => $gardenCell->getPlant() ? $gardenCell->getPlant()->getName() : 'пусто',
+                'cellId' => $gardenCell->getId(),
+                'plannedPlantName' => $plan ? $plan->getPlant()->getName() : '',
+                'plannedPlantAt' => $plan ? $plan->getPlantAt()->format('Y-m') : '',
+            ];
+        }
+
+        return [
+            'dimensionX' => $garden->getDimensionX(),
+            'dimensionY' => $garden->getDimensionY(),
+            'gardenCellList' => $gardenCellList,
+        ];
     }
 }

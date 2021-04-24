@@ -160,10 +160,16 @@
 
                         let plantName = $('[for="suggestion-radio-'+suggestionKey+'"]').text();
 
+                        // спрятать (План: Томаты 2021-05)
+                        $(".suggestion-div-"+cellId).parent().find("h4").hide();
+
+                        // добавить (План: Томаты 2021-05)
                         $(".cell-content"+cellId).append('<h4>(План: '+plantName+')</h4>');
 
+                        // спрятать варианты
                         $(".suggestion-div-"+cellId).hide();
 
+                        // спрятать кнопку
                         $("#save-btn-"+cellId).hide();
                     }
                 });

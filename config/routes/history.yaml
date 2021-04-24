@@ -1,3 +1,8 @@
+history_month:
+    path: /history/{year}/{month}
+    controller: App\Controller\HistoryController::index
+    methods: GET
+
 history_index:
     path: /history
     controller: App\Controller\HistoryController::index
