@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\GardenCell;
 use App\Entity\History;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,22 +21,28 @@ class HistoryRepository extends ServiceEntityRepository
         parent::__construct($registry, History::class);
     }
 
-    // /**
-    //  * @return History[] Returns an array of History objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param GardenCell[] $cell
+     * @param int $year
+     * @return History[]
+     */
+    public function findByCellAndYear(array $cell, int $year): array
     {
         return $this->createQueryBuilder('h')
-            ->andWhere('h.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('h.cell in (:cell)')
+            ->andWhere('h.plantedFrom >= :year_start')
+            ->andWhere('h.plantedFrom <= :year_end')
+            ->andWhere('h.plantedTo <= :year_end OR h.plantedTo IS NULL')
+            ->setParameter('cell', $cell)
+            ->setParameter('year_start', (new Datetime)->setDate($year,1,1))
+            ->setParameter('year_end', (new Datetime)->setDate($year,12,31))
             ->orderBy('h.id', 'ASC')
-            ->setMaxResults(10)
+            ->setMaxResults(1000)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?History

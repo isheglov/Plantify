@@ -1,5 +1,5 @@
 history_month:
-    path: /history/{year}/{month}
+    path: /history/{year}
     controller: App\Controller\HistoryController::index
     methods: GET
 

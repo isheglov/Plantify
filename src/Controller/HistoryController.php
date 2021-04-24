@@ -31,25 +31,57 @@ final class HistoryController extends AbstractController
         $this->security = $security;
     }
 
-    public function index(?int $year, ?int $month)
+    public function index(?int $year)
     {
+        $year = $year ?? (int)(new DateTime())->format("Y");
+
         $historyList = [];
 
-        foreach ($this->getHistoryEntityList() as $historyItem) {
-            $historyList[] = [
+        foreach ($this->getHistoryEntityList($year) as $historyItem) {
+            $cellId = $historyItem->getCell()->getId();
+
+            $historyList[$cellId][] = [
                 'id' => $historyItem->getId(),
-                'cell' => $historyItem->getCell()->getId(),
+                'cell' => $cellId,
                 'name' => $historyItem->getPlant()->getName(),
-                'dateFrom' => $historyItem->getPlantedFrom() ? $historyItem->getPlantedFrom()->format('Y F') : '',
+                'dateFrom' => $historyItem->getPlantedFrom() ? $historyItem->getPlantedFrom()->format('F') : '',
                 'dateTo' => $historyItem->getPlantedTo() ? $historyItem->getPlantedTo()->format('Y F') : '',
             ];
         }
 
-        $gardenScheme = $this->getGardenSchemeDto();
+        $garden = $this->getGarden();
+
+        $gardenCellList = [];
+        foreach ($garden->getCellList() as $gardenCell) {
+            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
+                'plantName' => 'пусто',
+                'cellId' => $gardenCell->getId(),
+            ];
+
+            if (empty($historyList[$gardenCell->getId()])) {
+                continue;
+            }
+
+            $plantName = [];
+            foreach ($historyList[$gardenCell->getId()] as $cell) {
+                $plantName[] = $cell['name'] . ' с ' . $cell['dateFrom'];
+            }
+
+            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()]['plantName'] =
+                implode("\n", $plantName);
+        }
+
+        $gardenScheme = [
+            'dimensionX' => $garden->getDimensionX(),
+            'dimensionY' => $garden->getDimensionY(),
+            'gardenCellList' => $gardenCellList,
+        ];
 
         $arr = [
             'historyList' => $historyList,
-            'date' => (new DateTime)->format("Y m")
+            'date' => $year,
+            'prev_year' => $this->prevYear($year),
+            'next_year' => $this->nextYear($year),
         ];
 
         $response = array_merge($gardenScheme, $arr);
@@ -60,7 +92,7 @@ final class HistoryController extends AbstractController
     /**
      * @return History[]
      */
-    private function getHistoryEntityList(): array
+    private function getHistoryEntityList(int $year): array
     {
         $user = $this->security->getUser();
         $garden = $this->gardenRepository->findOneBy(['owner' => $user]);
@@ -70,31 +102,9 @@ final class HistoryController extends AbstractController
             $gardenCellList[] = $gardenCell->getId();
         }
 
-        return $this->historyRepository->findBy(['cell' => $gardenCellList]);
+        return $this->historyRepository->findByCellAndYear($gardenCellList, $year);
     }
 
-    /**
-     * @return mixed[]
-     */
-    private function getGardenSchemeDto(): array
-    {
-        $garden = $this->getGarden();
-
-        $gardenCellList = [];
-        foreach ($garden->getCellList() as $gardenCell) {
-            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()] = [
-                'plantId' => $gardenCell->getPlant() ? $gardenCell->getPlant()->getId() : '',
-                'plantName' => $gardenCell->getPlant() ? $gardenCell->getPlant()->getName() : 'пусто',
-                'cellId' => $gardenCell->getId(),
-            ];
-        }
-
-        return [
-            'dimensionX' => $garden->getDimensionX(),
-            'dimensionY' => $garden->getDimensionY(),
-            'gardenCellList' => $gardenCellList,
-        ];
-    }
 
     /**
      * @return Garden
@@ -104,5 +114,33 @@ final class HistoryController extends AbstractController
         $user = $this->security->getUser();
 
         return $this->gardenRepository->findOneBy(['owner' => $user]);
+    }
+
+    /**
+     * @param int $year
+     * @return int
+     */
+    private function nextYear(int $year): int
+    {
+        if ((int)(new DateTime())->format("Y") <= $year) {
+            return 0;
+        }
+
+        return $year + 1;
+    }
+
+    /**
+     * @param int $year
+     * @return int
+     */
+    private function prevYear(int $year): int
+    {
+        $prevYear = max($year - 1, 2020);
+
+        if ($prevYear === $year) {
+            return 0;
+        }
+
+        return $prevYear;
     }
 }
