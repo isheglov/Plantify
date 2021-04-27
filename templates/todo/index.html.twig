@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <title>Plantify</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="../../css/style.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-</head>
-<body>
+{% include 'header.html.twig' %}
 
 {#menu buttons#}
 <div class="nav-bar">
@@ -20,13 +9,13 @@
 
 {% for todo in todoList %}
     <div class="modal-item" id="todo_{{ todo.id }}">
-        <input type="checkbox" id="checked_{{ todo.id }}" name="plant_chb" value="screen" class="checkbox">
-        <label for="checked_{{ todo.id }}" ><b>{{ todo.date }}</b> {{ todo.name }} </label>
+        <b class="todo-date">{{ todo.date }}</b> <span class="todo-name">{{ todo.name }}</span>
 
-        <a href="/planning/{{ todo.cell }}">На схеме</a>
+        <a class="todo-scheme" href="/planning/{{ todo.cell }}">На схеме</a>
 
-        <button id="done" data-planning-id="{{ todo.id }}">Сделано</button>
-        <button id="remove" data-planning-id="{{ todo.id }}">Удалить</button>
+        <button class="todo-done" id="done" data-planning-id="{{ todo.id }}">Сделано</button>
+
+        <button class="todo-remove" id="remove" data-planning-id="{{ todo.id }}">Удалить</button>
     </div>
 {% endfor %}
 
@@ -44,6 +33,8 @@
                 }
             });
         });
+
+
         $( "[id=remove]" ).on( "click", function() {
             let planningId = $(this).data('planning-id');
 

@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <title>Plantify</title>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="../../css/style.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-</head>
-<body>
+{% include 'header.html.twig' %}
 
-<div id="dialog-form" title="Что здесь растет">
+<div id="dialog-form" class="dialog-form" title="Что здесь растет">
     <form>
         <fieldset>
             <label for="plant">Название основной культуры</label>
@@ -39,9 +27,9 @@
 {#menu buttons#}
 <div class="nav-bar">
     {% include 'common/menu.html.twig' %}
-    <div>
+{#    <div>#}
         <button class='nav-bar-item' id="combined">Комбинированные посадки</button>
-    </div>
+{#    </div>#}
 </div>
 
 <div>

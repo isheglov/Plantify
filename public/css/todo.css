@@ -1,0 +1,45 @@
+
+.todo-date {
+    width: 150px;
+    font-size: 18px;
+}
+
+.todo-name {
+    width: 100px;
+    font-size: 18px;
+}
+
+.todo-scheme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    background: #1ea471;
+    color: #fff;
+    margin-right: 15px;
+    font-size: 18px;
+}
+
+.todo-done {
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    background: #1ea471;
+    color: #fff;
+    margin-right: 15px;
+    font-size: 18px;
+}
+
+.todo-remove {
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    background: rgb(227, 120, 120);
+    color: #fff;
+    font-size: 18px;
+}

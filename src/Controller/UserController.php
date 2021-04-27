@@ -33,16 +33,17 @@ final class UserController extends AbstractController
         if($garden === null) {
             return new Response(
                 '<html>
-                            <title>Plantify</title>
-                            <link rel="preconnect" href="https://fonts.gstatic.com">
-                            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
-                            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-                            <link rel="stylesheet" href="../../css/style.css">
+                            <head>
+                                <title>Plantify</title>
+                                <link rel="preconnect" href="https://fonts.gstatic.com">
+                                <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+                                <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+                                <link rel="stylesheet" href="../../css/style.css">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            </head>
                         <body>
                             <div class="nav-bar">
-                                <div>
-                                    <a class="nav-bar-item" href="/garden/create">Создание участка</a>
-                                </div>
+                                 <a class="nav-bar-item" href="/garden/create">Создание участка</a>
                             </div>
                             </div>
                         </body>
