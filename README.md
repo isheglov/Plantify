@@ -1,5 +1,14 @@
 Smart garden planting planner
 
+Requirements:
+`php7.4`
+`docker-compose`
+
+How to run on local:
+`composer install`
+`symfony server:start`
+`docker-compose up -d`
+
 Deploy:
 `git push heroku master`
 
