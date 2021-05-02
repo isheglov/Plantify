@@ -17,9 +17,9 @@ easy_admin:
             class: App\Entity\Plant
             label: 'Растения'
             list:
-                title: "Растения"
+                title: 'Растения'
                 fields:
-                    - { property: 'name', label: "Название" }
+                    - { property: 'name', label: 'Название' }
                     - { property: 'plantings', label: 'Посадка' }
                     - { property: 'follower', label: 'Потом сажать' }
                     - { property: 'companion', label: 'Можно комбинировать с' }
@@ -28,7 +28,7 @@ easy_admin:
             edit:
                 title: 'Редактировать'
                 fields:
-                    - { property: 'name', label: "Название" }
+                    - { property: 'name', label: 'Название' }
                     - { property: 'description', label: 'Описание' }
                     - { property: 'plantings', label: 'Посадка' }
                     - { property: 'follower', label: 'Потом сажать' }
@@ -37,13 +37,3 @@ easy_admin:
             class: App\Entity\Planting
         Region:
             class: App\Entity\Region
-
-#        Comment:
-#            class: App\Entity\Comment
-#            list:
-#                fields:
-#                    - author
-#                    - { property: 'email', type: 'email' }
-#                    - { property: 'createdAt', type: 'datetime' }
-#                sort: [ 'createdAt', 'ASC' ]
-#                filters: [ 'conference' ]
