@@ -35,13 +35,13 @@ final class HistoryController extends AbstractController
     {
         $year = $year ?? (int)(new DateTime())->format("Y");
 
+        setlocale(LC_TIME, "ru_RU");
+
         $historyList = [];
         foreach ($this->getHistoryEntityList($year) as $historyItem) {
-            $cellId = $historyItem->getCell()->getId();
-
-            $historyList[$cellId][] = [
+            $historyList[$historyItem->getCell()->getId()][] = [
                 'name' => $historyItem->getPlant()->getName(),
-                'dateFrom' => $historyItem->getPlantedFrom()->format('F'),
+                'dateFrom' => strftime("%B", $historyItem->getPlantedFrom()->getTimestamp()),
             ];
         }
 

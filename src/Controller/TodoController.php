@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Domain\GardenCell\AssignPlant\Service;
 use App\Entity\Planning;
+use App\Enumeration\MonthEnumeration;
 use App\Enumeration\PlanningStatusEnumeration;
 use App\Repository\GardenRepository;
 use App\Repository\PlanningRepository;
@@ -53,7 +54,7 @@ final class TodoController extends AbstractController
                 'id' => $planning->getId(),
                 'cell' => $planning->getCell()->getId(),
                 'name' => $planning->getPlant()->getName(),
-                'date' => $planning->getPlantAt()->format('Y F'),
+                'date' => $this->getFormattedDate($planning),
             ];
         }
 
@@ -66,13 +67,11 @@ final class TodoController extends AbstractController
     {
         $planning = $this->planningRepository->find($planningId);
 
-        // assign to the cell
         $response = $this->assignPlantToGardenCellService->execute(
             $planning->getCell()->getId(),
             $planning->getPlant()->getId()
         );
 
-        // change status to done
         $planning->setStatus(PlanningStatusEnumeration::DONE);
 
         $this->entityManager->persist($planning);
@@ -117,5 +116,20 @@ final class TodoController extends AbstractController
         );
 
         return $plannedList;
+    }
+
+    /**
+     * @param Planning $planning
+     * @return string
+     */
+    private function getFormattedDate(Planning $planning): string
+    {
+        $monthNumber = (int)$planning->getPlantAt()->format('m');
+
+        return sprintf(
+            "%s %s",
+            $planning->getPlantAt()->format('Y'),
+            MonthEnumeration::NUMBER_TO_MONTH[$monthNumber]
+        );
     }
 }

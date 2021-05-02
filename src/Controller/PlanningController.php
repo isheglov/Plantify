@@ -10,6 +10,7 @@ use App\Entity\GardenCell;
 use App\Entity\Planning;
 use App\Entity\Plant;
 use App\Entity\Planting;
+use App\Enumeration\MonthEnumeration;
 use App\Enumeration\PlanningStatusEnumeration;
 use App\Repository\GardenCellRepository;
 use App\Repository\GardenRepository;
@@ -235,7 +236,7 @@ final class PlanningController extends AbstractController
                 'plantName' => $gardenCell->getPlant() ? $gardenCell->getPlant()->getName() : 'пусто',
                 'cellId' => $gardenCell->getId(),
                 'plannedPlantName' => $plan ? $plan->getPlant()->getName() : '',
-                'plannedPlantAt' => $plan ? $plan->getPlantAt()->format('Y-m') : '',
+                'plannedPlantAt' => $plan ? $this->getFormattedDate($plan) : '',
             ];
         }
 
@@ -244,5 +245,19 @@ final class PlanningController extends AbstractController
             'dimensionY' => $garden->getDimensionY(),
             'gardenCellList' => $gardenCellList,
         ];
+    }
+    /**
+     * @param Planning $planning
+     * @return string
+     */
+    private function getFormattedDate(Planning $planning): string
+    {
+        $monthNumber = (int) $planning->getPlantAt()->format('m');
+
+        return sprintf(
+            "%s %s",
+            MonthEnumeration::NUMBER_TO_MONTH[$monthNumber],
+            $planning->getPlantAt()->format('Y')
+        );
     }
 }

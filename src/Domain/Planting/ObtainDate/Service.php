@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Planting\ObtainDate;
 
 use App\Entity\Planting;
+use App\Enumeration\MonthEnumeration;
 use DateTime;
 
 final class Service
@@ -24,22 +25,7 @@ final class Service
      */
     private function obtainMonth(Planting $planting): int
     {
-        $monthMap = [
-            'январь' => 1,
-            'февраль' => 2,
-            'март' => 3,
-            'апрель' => 4,
-            'май' => 5,
-            'июнь' => 6,
-            'июль' => 7,
-            'август' => 8,
-            'сентябрь' => 9,
-            'октябрь' => 10,
-            'ноябрь' => 11,
-            'декабрь' => 12,
-        ];
-
-        return $monthMap[mb_strtolower($planting->getPlantingMonth())];
+        return MonthEnumeration::MONTH_TO_NUMBER[mb_strtolower($planting->getPlantingMonth())];
     }
 
     /**
