@@ -27,9 +27,7 @@
 {#menu buttons#}
 <div class="nav-bar">
     {% include 'common/menu.html.twig' %}
-{#    <div>#}
-        <button class='nav-bar-item' id="combined">Комбинированные посадки</button>
-{#    </div>#}
+    <button class='nav-bar-item' id="combined">Комбинированные посадки</button>
 </div>
 
 <div>
@@ -42,7 +40,6 @@
                     <div class="cell-content{{ gardenCellList[j][i]['cellId'] }} cell-content">
 
                         <img id="edit" data-cellid="{{ gardenCellList[j][i]['cellId'] }}" data-plantId="{{ gardenCellList[j][i]['plantId'] }}" src="./img/edit.svg" alt="edit" height="25px" width="25px"/>
-                        <img id="question" data-cellid="{{ gardenCellList[j][i]['cellId'] }}" data-plantId="{{ gardenCellList[j][i]['plantId'] }}" src="./img/q.svg" alt="?" height="25px" width="25px"/>
 
                         <div><h1>{{ gardenCellList[j][i]['plantName'] }}</h1></div>
                     </div>
