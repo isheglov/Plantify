@@ -63,8 +63,7 @@ final class HistoryController extends AbstractController
                 $plantName[] = $cell['name'] . ' с ' . $cell['dateFrom'];
             }
 
-            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()]['plantName'] =
-                implode("\n", $plantName);
+            $gardenCellList[$gardenCell->getPositionX()][$gardenCell->getPositionY()]['plantName'] = $plantName;
         }
 
         $response = [

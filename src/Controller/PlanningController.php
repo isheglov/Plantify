@@ -186,7 +186,7 @@ final class PlanningController extends AbstractController
                 'cellId' => $gardenCell->getId(),
                 'plantId' => $plant->getId(),
                 'plantingId' => $planting->getId(),
-                'plantName' => $plant->getName().' '.$plantAt->format('Y-m'),
+                'plantName' => $plant->getName().' '.$this->getFormattedDate($plantAt),
                 'priority' => $priority,
             ];
         }
@@ -195,7 +195,7 @@ final class PlanningController extends AbstractController
     }
 
     /**
-     * @param $plantingList
+     * @param iterable $plantingList
      * @param int $plantingId
      * @return Planting
      * @throws Exception
@@ -236,7 +236,7 @@ final class PlanningController extends AbstractController
                 'plantName' => $gardenCell->getPlant() ? $gardenCell->getPlant()->getName() : 'пусто',
                 'cellId' => $gardenCell->getId(),
                 'plannedPlantName' => $plan ? $plan->getPlant()->getName() : '',
-                'plannedPlantAt' => $plan ? $this->getFormattedDate($plan) : '',
+                'plannedPlantAt' => $plan ? $this->getFormattedDate($plan->getPlantAt()) : '',
             ];
         }
 
@@ -246,18 +246,19 @@ final class PlanningController extends AbstractController
             'gardenCellList' => $gardenCellList,
         ];
     }
+
     /**
-     * @param Planning $planning
+     * @param DateTime $plantAt
      * @return string
      */
-    private function getFormattedDate(Planning $planning): string
+    private function getFormattedDate(DateTime $plantAt): string
     {
-        $monthNumber = (int) $planning->getPlantAt()->format('m');
+        $monthNumber = (int) $plantAt->format('m');
 
         return sprintf(
             "%s %s",
             MonthEnumeration::NUMBER_TO_MONTH[$monthNumber],
-            $planning->getPlantAt()->format('Y')
+            $plantAt->format('Y')
         );
     }
 }
