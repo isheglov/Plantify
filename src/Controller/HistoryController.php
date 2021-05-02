@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\Garden;
 use App\Entity\History;
+use App\Enumeration\MonthEnumeration;
 use App\Repository\GardenRepository;
 use App\Repository\HistoryRepository;
 use DateTime;
@@ -35,13 +36,13 @@ final class HistoryController extends AbstractController
     {
         $year = $year ?? (int)(new DateTime())->format("Y");
 
-        setlocale(LC_TIME, "ru_RU");
-
         $historyList = [];
         foreach ($this->getHistoryEntityList($year) as $historyItem) {
             $historyList[$historyItem->getCell()->getId()][] = [
                 'name' => $historyItem->getPlant()->getName(),
-                'dateFrom' => strftime("%B", $historyItem->getPlantedFrom()->getTimestamp()),
+                'dateFrom' => MonthEnumeration::NUMBER_TO_ROD_PADEJ[
+                    (int) $historyItem->getPlantedFrom()->format('m')
+                ],
             ];
         }
 
