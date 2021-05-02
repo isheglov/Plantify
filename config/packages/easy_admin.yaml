@@ -25,6 +25,12 @@ easy_admin:
                     - { property: 'companion', label: 'Можно комбинировать с' }
             new:
                 title: 'Добавить'
+                fields:
+                    - { property: 'name', label: 'Название' }
+                    - { property: 'description', label: 'Описание' }
+                    - { property: 'plantings', label: 'Посадка' }
+                    - { property: 'follower', label: 'Потом сажать' }
+                    - { property: 'companion', label: 'Можно комбинировать с' }
             edit:
                 title: 'Редактировать'
                 fields:
@@ -35,5 +41,38 @@ easy_admin:
                     - { property: 'companion', label: 'Можно комбинировать с' }
         Planting:
             class: App\Entity\Planting
+            label: 'Посадки'
+            list:
+                title: 'Посадки'
+                fields:
+                    - { property: 'plantingMonth', label: 'Месяц посадки' }
+                    - { property: 'plant', label: 'Растение' }
+                    - { property: 'region', label: 'Регион' }
+            new:
+                title: 'Добавить'
+                fields:
+                    - { property: 'plantingMonth', label: 'Месяц посадки' }
+                    - { property: 'plant', label: 'Растение' }
+                    - { property: 'region', label: 'Регион' }
+            edit:
+                title: 'Редактировать'
+                fields:
+                    - { property: 'plantingMonth', label: 'Месяц посадки' }
+                    - { property: 'plant', label: 'Растение' }
+                    - { property: 'region', label: 'Регион' }
+
         Region:
             class: App\Entity\Region
+            label: 'Регион'
+            list:
+                title: 'Регион'
+                fields:
+                    - { property: 'name', label: 'Регион' }
+            new:
+                title: 'Добавить'
+                fields:
+                    - { property: 'name', label: 'Регион' }
+            edit:
+                title: 'Редактировать'
+                fields:
+                    - { property: 'name', label: 'Регион' }
